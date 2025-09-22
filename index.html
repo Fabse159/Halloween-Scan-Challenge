@@ -17,10 +17,21 @@
             <h2>Willkommen!</h2>
             <p>Bitte gib deinen Namen und deine E-Mail-Adresse ein, um zu starten.</p>
             <form id="registration-form">
-                <input type="text" id="name" placeholder="Dein Name" required>
-                <input type="email" id="email" placeholder="Deine E-Mail-Adresse" required>
-                <button type="submit">Challenge starten</button>
-            </form>
+    <input type="text" id="name" placeholder="Dein Name" required>
+    <input type="email" id="email" placeholder="Deine E-Mail-Adresse" required>
+
+    <div class="consent-box">
+        <input type="checkbox" id="newsletter-consent">
+        <label for="newsletter-consent">
+            Ja, ich möchte per E-Mail über zukünftige Veranstaltungen und Angebote informiert werden.
+        </label>
+    </div>
+
+    <button type="submit">Challenge starten</button>
+    <p class="privacy-notice">
+        Mit deiner Teilnahme stimmst du unserer <a href="datenschutz.html" target="_blank">Datenschutzerklärung</a> zu.
+    </p>
+</form>
         </div>
 
         <div id="progress-view" class="view">
