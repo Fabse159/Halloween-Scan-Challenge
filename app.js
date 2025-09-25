@@ -11,43 +11,35 @@ window.addEventListener('load', () => {
 
     const isFirstScan = challengeData.scannedStations.length === 0;
 
-    // A. Allerster Scan überhaupt: Anleitung anzeigen
     if (isFirstScan && currentStation) {
         showView('instructions-view');
     }
 
-    // B. Eine gültige Station wurde gescannt: Fortschritt aktualisieren
     if (currentStation && !challengeData.scannedStations.includes(currentStation)) {
         challengeData.scannedStations.push(currentStation);
         localStorage.setItem('halloweenChallenge', JSON.stringify(challengeData));
     }
 
-    // C. Prüfen, ob das Spiel läuft (mind. 1 Station gescannt)
     if (challengeData.scannedStations.length > 0) {
-        // C1. Prüfen, ob alle Stationen gescannt wurden
         if (challengeData.scannedStations.length >= TOTAL_STATIONS) {
-            showView('completion-form-view'); // Zeige das Abschluss-Formular
+            showView('completion-form-view');
         } else {
-            // C2. Noch nicht fertig -> Zeige den Fortschritt
             showProgressView(challengeData);
         }
     } else {
-        // D. Wenn die Seite ohne ?station=... aufgerufen wird und noch nichts gescannt wurde
         showView('instructions-view');
         document.querySelector('#instructions-view p').textContent = "Bitte scanne den QR-Code an einer beliebigen Station, um zu beginnen!";
     }
 });
 
-// Event Listener für das finale Formular
 document.getElementById('completion-form').addEventListener('submit', (event) => {
-    event.preventDefault(); // Verhindert, dass die Seite neu lädt
+    event.preventDefault(); 
 
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
     const privacyConsent = document.getElementById('privacy-consent').checked;
     const marketingConsent = document.getElementById('marketing-consent').checked;
 
-    // Prüfung nur noch auf die Pflichtfelder. marketingConsent ist optional.
     if (name && email && privacyConsent) {
         const finalData = { name, email, marketingConsent };
         showFinalQrCodeView(finalData);
@@ -55,8 +47,6 @@ document.getElementById('completion-form').addEventListener('submit', (event) =>
         alert('Bitte fülle die Pflichtfelder aus und stimme der Datenschutzerklärung zu.');
     }
 });
-
-// --- Hilfsfunktionen zum Anzeigen der verschiedenen Bereiche ---
 
 function showView(viewId) {
     document.querySelectorAll('.view').forEach(view => view.style.display = 'none');
@@ -67,7 +57,7 @@ function showProgressView(challengeData) {
     showView('progress-view');
     
     const stationsList = document.getElementById('stations-list');
-    stationsList.innerHTML = ''; // Leere die alte Liste
+    stationsList.innerHTML = '';
 
     for (let i = 1; i <= TOTAL_STATIONS; i++) {
         const isScanned = challengeData.scannedStations.includes(i);
@@ -84,10 +74,21 @@ function showFinalQrCodeView(finalData) {
     const qrCodeContainer = document.getElementById('final-qrcode');
     qrCodeContainer.innerHTML = ''; 
 
-    const qrCodeData = JSON.stringify(finalData);
+    // --- HIER IST DIE WICHTIGE ÄNDERUNG ---
+    // Ersetze diese URL mit dem Link zu deiner scanner.html
+    const baseUrl = 'https://fabse159.github.io/Halloween-Scan-Challenge/scanner.html';
 
+    // Daten für die URL sicher kodieren
+    const nameParam = encodeURIComponent(finalData.name);
+    const emailParam = encodeURIComponent(finalData.email);
+    const consentParam = finalData.marketingConsent; // true/false muss nicht kodiert werden
+
+    // Die finale URL mit den Daten zusammenbauen
+    const urlWithData = `${baseUrl}?name=${nameParam}&email=${emailParam}&consent=${consentParam}`;
+
+    // Erzeuge den QR-Code aus der URL
     new QRCode(qrCodeContainer, {
-        text: qrCodeData,
+        text: urlWithData,
         width: 256,
         height: 256
     });
