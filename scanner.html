@@ -16,6 +16,10 @@
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         th { background-color: #f2f2f2; }
+        .sortable { cursor: pointer; user-select: none; }
+        .sortable:hover { background-color: #e9e9e9; }
+        .sorted-asc::after { content: " ▲"; }
+        .sorted-desc::after { content: " ▼"; }
     </style>
 </head>
 <body>
@@ -30,9 +34,9 @@
     <table>
         <thead>
             <tr>
-                <th>Name</th>
-                <th>E-Mail</th>
-                <th>Werbung OK?</th>
+                <th class="sortable" data-sort="name">Name</th>
+                <th class="sortable" data-sort="email">E-Mail</th>
+                <th class="sortable" data-sort="marketingConsent">Werbung OK?</th>
             </tr>
         </thead>
         <tbody id="data-table-body">
@@ -47,7 +51,31 @@
             const exportBtn = document.getElementById('export-btn');
 
             let collectedData = JSON.parse(localStorage.getItem('collectedHalloweenData')) || [];
+            let currentSort = { key: null, direction: 'asc' };
 
+            function sortData(key) {
+                if (currentSort.key === key) {
+                    currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+                } else {
+                    currentSort.key = key;
+                    currentSort.direction = 'asc';
+                }
+
+                const direction = currentSort.direction === 'asc' ? 1 : -1;
+
+                collectedData.sort((a, b) => {
+                    const valA = a[key];
+                    const valB = b[key];
+
+                    if (typeof valA === 'boolean') {
+                        return (valA === valB) ? 0 : valA ? -1 * direction : 1 * direction;
+                    }
+                    return valA.localeCompare(valB) * direction;
+                });
+
+                updateUI();
+            }
+            
             function updateUI() {
                 countHeader.textContent = `Gesammelte Daten: ${collectedData.length}`;
                 tableBody.innerHTML = '';
@@ -59,6 +87,14 @@
                     consentCell.textContent = item.marketingConsent ? '✅ Ja' : '❌ Nein';
                 });
                 exportBtn.disabled = collectedData.length === 0;
+
+                // Update sort indicators in table headers
+                document.querySelectorAll('.sortable').forEach(th => {
+                    th.classList.remove('sorted-asc', 'sorted-desc');
+                    if (th.dataset.sort === currentSort.key) {
+                        th.classList.add(currentSort.direction === 'asc' ? 'sorted-asc' : 'sorted-desc');
+                    }
+                });
             }
 
             function processUrlData() {
@@ -90,20 +126,21 @@
                 updateUI();
             }
 
+            document.querySelectorAll('.sortable').forEach(header => {
+                header.addEventListener('click', () => {
+                    sortData(header.dataset.sort);
+                });
+            });
+
             exportBtn.addEventListener('click', () => {
-                // Kopfzeile mit Semikolon als Trennzeichen
                 const header = "Name;Email;Marketing-Zustimmung";
-                
-                // Datenzeilen, ebenfalls mit Semikolon
                 const rows = collectedData.map(item => {
-                    const name = item.name.replace(/;/g, ''); // Ersetze Semikolons im Namen, um Fehler zu vermeiden
+                    const name = item.name.replace(/;/g, '');
                     const email = item.email.replace(/;/g, '');
                     const consent = item.marketingConsent ? 'Ja' : 'Nein';
                     return `${name};${email};${consent}`;
                 });
-
                 const csvContent = [header, ...rows].join("\n");
-                
                 const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement("a");
                 link.href = URL.createObjectURL(blob);
