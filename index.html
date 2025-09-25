@@ -3,48 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Challenge</title>
+    <title>Halloween Challenge</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="container">
         <header>
-            <h1>Event Challenge 🚀</h1>
+            <h1>Halloween Challenge 🎃</h1>
         </header>
 
-        <div id="registration-view" class="view">
-            <h2>Willkommen!</h2>
-            <p>Bitte gib deinen Namen und deine E-Mail-Adresse ein, um zu starten.</p>
-            <form id="registration-form">
-    <input type="text" id="name" placeholder="Dein Name" required>
-    <input type="email" id="email" placeholder="Deine E-Mail-Adresse" required>
-
-    <div class="consent-box">
-        <input type="checkbox" id="newsletter-consent">
-        <label for="newsletter-consent">
-            Ja, ich möchte per E-Mail über zukünftige Veranstaltungen und Angebote informiert werden.
-        </label>
-    </div>
-
-    <p class="privacy-notice">
-        Mit deiner Teilnahme stimmst du unserer <a href="datenschutz.html" target="_blank">Datenschutzerklärung</a> zu.
-    </p>
-
-    <button type="submit">Challenge starten</button>
-</form>
+        <div id="instructions-view" class="view">
+            <h2>Willkommen zur Challenge!</h2>
+            <p><strong>So funktioniert's:</strong></p>
+            <ol class="instructions-list">
+                <li>Scanne die QR-Codes an allen Stationen in beliebiger Reihenfolge.</li>
+                <li>Dein Fortschritt wird dir hier immer angezeigt.</li>
+                <li>Wenn du alle Stationen gefunden hast, gib am Ende deine Daten ein.</li>
+                <li>Zeige den finalen QR-Code vor und erhalte als Belohnung einen coolen <strong>Halloween-Schlüsselanhänger</strong>!</li>
+            </ol>
+            <hr>
         </div>
 
         <div id="progress-view" class="view">
-            <h2 id="welcome-message"></h2>
             <h3>Dein Fortschritt:</h3>
             <div id="stations-list">
                 </div>
         </div>
 
-        <div id="completion-view" class="view">
-            <h2>🎉 Geschafft! 🎉</h2>
-            <p>Du hast alle Stationen besucht. Zeige diesen QR-Code bitte dem Veranstalter am Ziel.</p>
+        <div id="completion-form-view" class="view">
+            <h2>🎉 Glückwunsch! Du hast alle Stationen gefunden! 🎉</h2>
+            <p>Sichere dir jetzt deinen Halloween-Schlüsselanhänger! Fülle dazu bitte die folgenden Felder aus.</p>
+            <form id="completion-form">
+                <input type="text" id="name" placeholder="Dein Name" required>
+                <input type="email" id="email" placeholder="Deine E-Mail-Adresse" required>
+                
+                <div class="consent-box">
+                    <input type="checkbox" id="privacy-consent" required>
+                    <label for="privacy-consent">
+                        Ich habe die <a href="datenschutz.html" target="_blank">Datenschutzerklärung</a> gelesen und stimme ihr zu.
+                    </label>
+                </div>
+                <div class="consent-box">
+                    <input type="checkbox" id="marketing-consent" required>
+                    <label for="marketing-consent">
+                        Ich stimme zu, dass meine Daten verarbeitet werden und ich per E-Mail über zukünftige Angebote informiert werde.
+                    </label>
+                </div>
+
+                <button type="submit">Belohnung abholen</button>
+            </form>
+        </div>
+
+        <div id="final-qrcode-view" class="view">
+            <h2>Zeige diesen Code dem Veranstalter!</h2>
+            <p>Vielen Dank für deine Teilnahme. Dein Schlüsselanhänger wartet auf dich!</p>
             <div id="final-qrcode"></div>
         </div>
 
