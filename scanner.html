@@ -106,28 +106,36 @@
                 });
             }
 
+            // --- HIER IST DIE KORRIGIERTE LOGIK ---
             function processUrlData() {
                 const urlParams = new URLSearchParams(window.location.search);
+                
                 if (urlParams.has('name') && urlParams.has('email') && urlParams.has('consent')) {
                     const data = {
                         name: urlParams.get('name'),
                         email: urlParams.get('email'),
                         marketingConsent: urlParams.get('consent') === 'true'
                     };
+
                     const isDuplicate = collectedData.some(item => item.email === data.email);
+                    
                     if (isDuplicate) {
+                        // Setze die Fehlermeldung...
                         statusDiv.textContent = 'FEHLER: Dieser Teilnehmer wurde bereits erfasst!';
                         statusDiv.className = 'error';
-                        return;
+                    } else {
+                        // ...oder füge die neuen Daten hinzu
+                        collectedData.push(data);
+                        localStorage.setItem('collectedHalloweenData', JSON.stringify(collectedData));
+                        statusDiv.textContent = `Erfolgreich hinzugefügt: ${data.name}`;
+                        statusDiv.className = 'success';
                     }
-                    collectedData.push(data);
-                    localStorage.setItem('collectedHalloweenData', JSON.stringify(collectedData));
-                    statusDiv.textContent = `Erfolgreich hinzugefügt: ${data.name}`;
-                    statusDiv.className = 'success';
                 } else {
                     statusDiv.textContent = 'Bereit zum Scannen des nächsten QR-Codes.';
                     statusDiv.className = 'info';
                 }
+                
+                // WICHTIG: Die Tabelle wird jetzt in jedem Fall neu gezeichnet.
                 updateUI();
             }
 
