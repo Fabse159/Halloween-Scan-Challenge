@@ -12,6 +12,7 @@
         .success { color: #28a745; background-color: #e0ffe0; }
         .error { color: #dc3545; background-color: #ffe0e0; }
         button { background-color: #007aff; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 1rem; width: 100%; margin-top: 20px; }
+        #start-scan-btn { padding: 20px; font-size: 1.2em; background-color: #28a745; }
         button:disabled { background-color: #aaa; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
@@ -21,36 +22,45 @@
 <body>
 
     <h1>QR Code Scanner & Datensammler</h1>
-    
-    <div id="reader"></div>
-    <div id="result">Bitte einen QR-Code scannen...</div>
 
-    <hr>
-    
-    <h2 id="count">Gesammelte Daten: 0</h2>
-    <button id="export-btn" disabled>Daten als CSV (Excel) exportieren</button>
-    
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>E-Mail</th>
-                <th>Werbung OK?</th>
-            </tr>
-        </thead>
-        <tbody id="data-table-body">
-            </tbody>
-    </table>
+    <div id="start-view">
+        <p style="text-align: center;">Klicke auf den Button, um die Kamera zu starten und mit dem Scannen zu beginnen.</p>
+        <button id="start-scan-btn">📷 Kamera starten</button>
+    </div>
+
+    <div id="scanner-view" style="display: none;">
+        <div id="reader"></div>
+        <div id="result">Bitte einen QR-Code scannen...</div>
+        <hr>
+        <h2 id="count">Gesammelte Daten: 0</h2>
+        <button id="export-btn" disabled>Daten als CSV (Excel) exportieren</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>E-Mail</th>
+                    <th>Werbung OK?</th>
+                </tr>
+            </thead>
+            <tbody id="data-table-body">
+                </tbody>
+        </table>
+    </div>
 
     <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const startView = document.getElementById('start-view');
+            const scannerView = document.getElementById('scanner-view');
+            const startScanBtn = document.getElementById('start-scan-btn');
+            
             const resultDiv = document.getElementById('result');
             const countHeader = document.getElementById('count');
             const tableBody = document.getElementById('data-table-body');
             const exportBtn = document.getElementById('export-btn');
 
             let collectedData = JSON.parse(localStorage.getItem('collectedHalloweenData')) || [];
+            let html5QrcodeScanner;
 
             function updateUI() {
                 countHeader.textContent = `Gesammelte Daten: ${collectedData.length}`;
@@ -72,7 +82,6 @@
                     const data = JSON.parse(decodedText);
                     
                     if (data.name && data.email) {
-                        // Prüfen, ob dieser Eintrag (via E-Mail) schon existiert
                         const isDuplicate = collectedData.some(item => item.email === data.email);
                         if (isDuplicate) {
                             resultDiv.textContent = 'FEHLER: Dieser Teilnehmer wurde bereits gescannt!';
@@ -97,19 +106,25 @@
             }
 
             function onScanFailure(error) {
-                // Diese Funktion kann ignoriert werden, sie wird oft aufgerufen
+                // Kann ignoriert werden
             }
+            
+            // Event Listener für den neuen Start-Button
+            startScanBtn.addEventListener('click', () => {
+                startView.style.display = 'none';
+                scannerView.style.display = 'block';
 
-            let html5QrcodeScanner = new Html5QrcodeScanner(
-                "reader", 
-                { fps: 10, qrbox: { width: 250, height: 250 } }, 
-                false // verbose = false
-            );
-            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+                html5QrcodeScanner = new Html5QrcodeScanner(
+                    "reader", 
+                    { fps: 10, qrbox: { width: 250, height: 250 } }, 
+                    false // verbose
+                );
+                html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+            });
 
             exportBtn.addEventListener('click', () => {
                 let csvContent = "data:text/csv;charset=utf-8,";
-                csvContent += "Name,Email,Marketing-Zustimmung\n"; // Header-Zeile
+                csvContent += "Name,Email,Marketing-Zustimmung\n";
 
                 collectedData.forEach(item => {
                     const row = `${item.name},${item.email},${item.marketingConsent ? 'Ja' : 'Nein'}`;
