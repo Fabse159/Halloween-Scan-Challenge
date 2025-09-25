@@ -12,10 +12,11 @@
         .info { color: #004085; background-color: #cce5ff; }
         .error { color: #dc3545; background-color: #ffe0e0; }
         button { background-color: #007aff; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 1rem; width: 100%; margin-top: 10px; }
-        button:disabled { background-color: #aaa; }
+        button:disabled { background-color: #aaa; cursor: not-allowed; }
         .export-buttons { display: flex; gap: 10px; margin-top: 20px; }
         #export-yes-btn { background-color: #28a745; }
         #export-no-btn { background-color: #dc3545; }
+        #reset-btn { background-color: #6c757d; margin-top: 10px; } /* Grau für Reset */
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         th { background-color: #f2f2f2; }
@@ -36,6 +37,7 @@
         <button id="export-yes-btn" disabled>Export JA</button>
         <button id="export-no-btn" disabled>Export NEIN</button>
     </div>
+    <button id="reset-btn" disabled>Datensatz zurücksetzen</button>
     
     <table>
         <thead>
@@ -56,6 +58,7 @@
             const tableBody = document.getElementById('data-table-body');
             const exportYesBtn = document.getElementById('export-yes-btn');
             const exportNoBtn = document.getElementById('export-no-btn');
+            const resetBtn = document.getElementById('reset-btn');
 
             let collectedData = JSON.parse(localStorage.getItem('collectedHalloweenData')) || [];
             let currentSort = { key: null, direction: 'asc' };
@@ -95,6 +98,8 @@
 
                 exportYesBtn.disabled = consentYesCount === 0;
                 exportNoBtn.disabled = consentNoCount === 0;
+                resetBtn.disabled = collectedData.length === 0;
+
                 exportYesBtn.textContent = `Export JA (${consentYesCount})`;
                 exportNoBtn.textContent = `Export NEIN (${consentNoCount})`;
 
@@ -106,25 +111,19 @@
                 });
             }
 
-            // --- HIER IST DIE KORRIGIERTE LOGIK ---
             function processUrlData() {
                 const urlParams = new URLSearchParams(window.location.search);
-                
                 if (urlParams.has('name') && urlParams.has('email') && urlParams.has('consent')) {
                     const data = {
                         name: urlParams.get('name'),
                         email: urlParams.get('email'),
                         marketingConsent: urlParams.get('consent') === 'true'
                     };
-
                     const isDuplicate = collectedData.some(item => item.email === data.email);
-                    
                     if (isDuplicate) {
-                        // Setze die Fehlermeldung...
-                        statusDiv.textContent = 'FEHLER: Dieser Teilnehmer wurde bereits erfasst!';
+                        statusDiv.textContent = 'ACHTUNG: Dieser Teilnehmer wurde bereits erfasst!';
                         statusDiv.className = 'error';
                     } else {
-                        // ...oder füge die neuen Daten hinzu
                         collectedData.push(data);
                         localStorage.setItem('collectedHalloweenData', JSON.stringify(collectedData));
                         statusDiv.textContent = `Erfolgreich hinzugefügt: ${data.name}`;
@@ -134,8 +133,6 @@
                     statusDiv.textContent = 'Bereit zum Scannen des nächsten QR-Codes.';
                     statusDiv.className = 'info';
                 }
-                
-                // WICHTIG: Die Tabelle wird jetzt in jedem Fall neu gezeichnet.
                 updateUI();
             }
 
@@ -170,6 +167,34 @@
             exportNoBtn.addEventListener('click', () => {
                 const consentNo = collectedData.filter(item => !item.marketingConsent);
                 generateAndDownloadCsv(consentNo, 'export_werbung_nein.csv');
+            });
+
+            // --- NEUE LOGIK FÜR DEN RESET-BUTTON ---
+            resetBtn.addEventListener('click', () => {
+                // Button sofort sperren, um Doppelklicks zu verhindern
+                resetBtn.disabled = true;
+                
+                // Sicherheitsabfrage anzeigen
+                const isConfirmed = confirm("Bist du sicher, dass du alle gesammelten Daten endgültig löschen möchtest? Dieser Vorgang kann nicht rückgängig gemacht werden.");
+
+                if (isConfirmed) {
+                    // Daten löschen
+                    collectedData = [];
+                    localStorage.removeItem('collectedHalloweenData');
+                    
+                    // UI aktualisieren und Erfolgsmeldung anzeigen
+                    statusDiv.textContent = 'Alle Daten wurden erfolgreich gelöscht.';
+                    statusDiv.className = 'success';
+                    updateUI();
+                }
+
+                // Button nach 5 Sekunden wieder freigeben, egal was der Nutzer wählt
+                setTimeout(() => {
+                    // Nur freigeben, wenn auch Daten vorhanden sind
+                    if (collectedData.length > 0) {
+                        resetBtn.disabled = false;
+                    }
+                }, 5000);
             });
 
             processUrlData();
