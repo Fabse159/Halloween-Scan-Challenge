@@ -60,19 +60,15 @@
                     currentSort.key = key;
                     currentSort.direction = 'asc';
                 }
-
                 const direction = currentSort.direction === 'asc' ? 1 : -1;
-
                 collectedData.sort((a, b) => {
                     const valA = a[key];
                     const valB = b[key];
-
                     if (typeof valA === 'boolean') {
                         return (valA === valB) ? 0 : valA ? -1 * direction : 1 * direction;
                     }
                     return valA.localeCompare(valB) * direction;
                 });
-
                 updateUI();
             }
             
@@ -87,8 +83,6 @@
                     consentCell.textContent = item.marketingConsent ? '✅ Ja' : '❌ Nein';
                 });
                 exportBtn.disabled = collectedData.length === 0;
-
-                // Update sort indicators in table headers
                 document.querySelectorAll('.sortable').forEach(th => {
                     th.classList.remove('sorted-asc', 'sorted-desc');
                     if (th.dataset.sort === currentSort.key) {
@@ -99,24 +93,20 @@
 
             function processUrlData() {
                 const urlParams = new URLSearchParams(window.location.search);
-                
                 if (urlParams.has('name') && urlParams.has('email') && urlParams.has('consent')) {
                     const data = {
                         name: urlParams.get('name'),
                         email: urlParams.get('email'),
                         marketingConsent: urlParams.get('consent') === 'true'
                     };
-
                     const isDuplicate = collectedData.some(item => item.email === data.email);
                     if (isDuplicate) {
                         statusDiv.textContent = 'FEHLER: Dieser Teilnehmer wurde bereits erfasst!';
                         statusDiv.className = 'error';
                         return;
                     }
-
                     collectedData.push(data);
                     localStorage.setItem('collectedHalloweenData', JSON.stringify(collectedData));
-                    
                     statusDiv.textContent = `Erfolgreich hinzugefügt: ${data.name}`;
                     statusDiv.className = 'success';
                 } else {
@@ -132,15 +122,30 @@
                 });
             });
 
+            // --- HIER IST DIE NEUE EXPORT-FUNKTION ---
             exportBtn.addEventListener('click', () => {
-                const header = "Name;Email;Marketing-Zustimmung";
-                const rows = collectedData.map(item => {
-                    const name = item.name.replace(/;/g, '');
-                    const email = item.email.replace(/;/g, '');
-                    const consent = item.marketingConsent ? 'Ja' : 'Nein';
-                    return `${name};${email};${consent}`;
+                const header = "Name;Email";
+
+                // 1. Daten filtern
+                const consentYes = collectedData.filter(item => item.marketingConsent);
+                const consentNo = collectedData.filter(item => !item.marketingConsent);
+
+                // 2. CSV-String für "Ja"-Gruppe erstellen
+                let csvContent = "Teilnehmer mit Werbe-Einwilligung (Ja)\n";
+                csvContent += header + "\n";
+                consentYes.forEach(item => {
+                    csvContent += `${item.name.replace(/;/g, '')};${item.email.replace(/;/g, '')}\n`;
                 });
-                const csvContent = [header, ...rows].join("\n");
+
+                // 3. Abstand und "Nein"-Gruppe hinzufügen
+                csvContent += "\n\n"; // Zwei Zeilen Abstand
+                csvContent += "Teilnehmer ohne Werbe-Einwilligung (Nein)\n";
+                csvContent += header + "\n";
+                consentNo.forEach(item => {
+                    csvContent += `${item.name.replace(/;/g, '')};${item.email.replace(/;/g, '')}\n`;
+                });
+
+                // 4. Download generieren
                 const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement("a");
                 link.href = URL.createObjectURL(blob);
