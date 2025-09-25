@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF--8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Scanner & Datensammler</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 20px auto; padding: 0 15px; }
         h1, h2 { color: #000; text-align: center; }
-        #reader { width: 100%; max-width: 500px; margin: 20px auto; border: 2px solid #eee; border-radius: 8px; }
-        #result { text-align: center; font-size: 1.1em; font-weight: bold; margin: 20px 0; padding: 15px; border-radius: 8px; }
+        #reader { width: 100%; max-width: 500px; min-height: 250px; margin: 10px auto; border: 2px solid #eee; border-radius: 8px; background-color: #f9f9f9; display: flex; align-items: center; justify-content: center; color: #aaa; }
+        #result { text-align: center; font-size: 1.1em; font-weight: bold; margin: 20px 0; padding: 15px; border-radius: 8px; background-color: #f2f2f2;}
         .success { color: #28a745; background-color: #e0ffe0; }
         .error { color: #dc3545; background-color: #ffe0e0; }
         button { background-color: #007aff; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 1rem; width: 100%; margin-top: 20px; }
-        #start-scan-btn { padding: 20px; font-size: 1.2em; background-color: #28a745; }
+        #start-scan-btn { padding: 15px; font-size: 1.2em; background-color: #28a745; margin-top: 0; }
         button:disabled { background-color: #aaa; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
@@ -23,44 +23,43 @@
 
     <h1>QR Code Scanner & Datensammler</h1>
 
-    <div id="start-view">
-        <p style="text-align: center;">Klicke auf den Button, um die Kamera zu starten und mit dem Scannen zu beginnen.</p>
-        <button id="start-scan-btn">📷 Kamera starten</button>
+    <button id="start-scan-btn">📷 Kamera starten</button>
+    
+    <div id="reader">
+        Kamera ist inaktiv
     </div>
 
-    <div id="scanner-view" style="display: none;">
-        <div id="reader"></div>
-        <div id="result">Bitte einen QR-Code scannen...</div>
-        <hr>
-        <h2 id="count">Gesammelte Daten: 0</h2>
-        <button id="export-btn" disabled>Daten als CSV (Excel) exportieren</button>
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>E-Mail</th>
-                    <th>Werbung OK?</th>
-                </tr>
-            </thead>
-            <tbody id="data-table-body">
-                </tbody>
-        </table>
-    </div>
+    <div id="result">Bitte starte die Kamera und scanne einen QR-Code...</div>
+    
+    <hr>
+    
+    <h2 id="count">Gesammelte Daten: 0</h2>
+    <button id="export-btn" disabled>Daten als CSV (Excel) exportieren</button>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>E-Mail</th>
+                <th>Werbung OK?</th>
+            </tr>
+        </thead>
+        <tbody id="data-table-body">
+            </tbody>
+    </table>
 
     <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const startView = document.getElementById('start-view');
-            const scannerView = document.getElementById('scanner-view');
             const startScanBtn = document.getElementById('start-scan-btn');
-            
+            const readerDiv = document.getElementById('reader');
             const resultDiv = document.getElementById('result');
             const countHeader = document.getElementById('count');
             const tableBody = document.getElementById('data-table-body');
             const exportBtn = document.getElementById('export-btn');
 
             let collectedData = JSON.parse(localStorage.getItem('collectedHalloweenData')) || [];
-            let html5QrcodeScanner;
+            let scannerIsRunning = false;
 
             function updateUI() {
                 countHeader.textContent = `Gesammelte Daten: ${collectedData.length}`;
@@ -109,17 +108,21 @@
                 // Kann ignoriert werden
             }
             
-            // Event Listener für den neuen Start-Button
             startScanBtn.addEventListener('click', () => {
-                startView.style.display = 'none';
-                scannerView.style.display = 'block';
+                if (scannerIsRunning) return;
 
-                html5QrcodeScanner = new Html5QrcodeScanner(
+                const html5QrcodeScanner = new Html5QrcodeScanner(
                     "reader", 
                     { fps: 10, qrbox: { width: 250, height: 250 } }, 
                     false // verbose
                 );
                 html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+                
+                // Button deaktivieren und Text ändern nach dem Start
+                startScanBtn.disabled = true;
+                startScanBtn.textContent = 'Kamera ist aktiv...';
+                readerDiv.textContent = ''; // Platzhalter-Text entfernen
+                scannerIsRunning = true;
             });
 
             exportBtn.addEventListener('click', () => {
@@ -127,7 +130,7 @@
                 csvContent += "Name,Email,Marketing-Zustimmung\n";
 
                 collectedData.forEach(item => {
-                    const row = `${item.name},${item.email},${item.marketingConsent ? 'Ja' : 'Nein'}`;
+                    const row = `${item.name.replace(/,/g, '')},${item.email.replace(/,/g, '')},${item.marketingConsent ? 'Ja' : 'Nein'}`;
                     csvContent += row + "\n";
                 });
 
