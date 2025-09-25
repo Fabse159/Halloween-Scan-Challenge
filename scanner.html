@@ -3,58 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kamera-Test</title>
+    <title>QR Code Scanner & Datensammler</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 20px; }
-        #reader { width: 90%; max-width: 400px; margin: 20px auto; border: 2px solid grey; }
-        button { font-size: 1.2em; padding: 15px; cursor: pointer; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 20px auto; padding: 0 15px; }
+        h1, h2 { color: #000; text-align: center; }
+        #result { text-align: center; font-size: 1.1em; font-weight: bold; margin: 20px 0; padding: 15px; border-radius: 8px; background-color: #f2f2f2;}
+        .success { color: #28a745; background-color: #e0ffe0; }
+        .error { color: #dc3545; background-color: #ffe0e0; }
+        button { background-color: #007aff; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 1rem; width: 100%; margin-top: 20px; }
+        #upload-btn { padding: 15px; font-size: 1.2em; background-color: #28a745; }
+        button:disabled { background-color: #aaa; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
     </style>
 </head>
 <body>
-    <h1>Minimaler Kamera-Test</h1>
-    <button id="start-btn">Kamera starten</button>
-    <div id="reader"></div>
-    <div id="result"></div>
+
+    <h1>QR Code Scanner & Datensammler</h1>
+
+    <input type="file" id="qr-input-file" accept="image/*" style="display: none;">
+    
+    <button id="upload-btn">📷 Bild von QR-Code hochladen</button>
+
+    <div id="result">Bitte lade ein Bild mit einem QR-Code hoch...</div>
+    
+    <hr>
+    
+    <h2 id="count">Gesammelte Daten: 0</h2>
+    <button id="export-btn" disabled>Daten als CSV (Excel) exportieren</button>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>E-Mail</th>
+                <th>Werbung OK?</th>
+            </tr>
+        </thead>
+        <tbody id="data-table-body">
+            </tbody>
+    </table>
 
     <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <script>
-        document.getElementById('start-btn').addEventListener('click', () => {
+        document.addEventListener('DOMContentLoaded', () => {
+            const uploadBtn = document.getElementById('upload-btn');
+            const fileInput = document.getElementById('qr-input-file');
             const resultDiv = document.getElementById('result');
-            resultDiv.textContent = 'Versuche, Kamera zu starten...';
+            const countHeader = document.getElementById('count');
+            const tableBody = document.getElementById('data-table-body');
+            const exportBtn = document.getElementById('export-btn');
 
-            const html5QrCode = new Html5Qrcode("reader");
-            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+            let collectedData = JSON.parse(localStorage.getItem('collectedHalloweenData')) || [];
+            const html5QrCode = new Html5Qrcode("result"); // Braucht ein Element, ist hier aber nur für die Logik
 
-            // Wähle die hintere Kamera aus
-            Html5Qrcode.getCameras().then(cameras => {
-                if (cameras && cameras.length) {
-                    const cameraId = cameras.find(camera => camera.label.toLowerCase().includes('back'))?.id || cameras[0].id;
-                    resultDiv.textContent = 'Hinterkamera gefunden. Starte Stream...';
+            function updateUI() {
+                countHeader.textContent = `Gesammelte Daten: ${collectedData.length}`;
+                tableBody.innerHTML = '';
+                
+                collectedData.forEach(item => {
+                    const row = tableBody.insertRow();
+                    row.insertCell(0).textContent = item.name;
+                    row.insertCell(1).textContent = item.email;
+                    const consentCell = row.insertCell(2);
+                    consentCell.textContent = item.marketingConsent ? '✅ Ja' : '❌ Nein';
+                });
+
+                exportBtn.disabled = collectedData.length === 0;
+            }
+
+            function handleDecodedText(decodedText) {
+                 try {
+                    const data = JSON.parse(decodedText);
                     
-                    html5QrCode.start(
-                        cameraId, 
-                        config,
-                        (decodedText, decodedResult) => {
-                            // Erfolg
-                            resultDiv.textContent = `Erfolg! Code gefunden: ${decodedText}`;
-                            html5QrCode.stop();
-                        },
-                        (errorMessage) => {
-                            // Fehler beim Scannen (z.B. kein QR-Code im Bild)
-                            // Wird ignoriert
-                        })
-                        .catch((err) => {
-                            // Kritischer Fehler beim Starten
-                            resultDiv.textContent = `FEHLER BEIM START: ${err}`;
-                            alert(`Konnte die Kamera nicht starten. Fehler: ${err}`);
-                        });
-                } else {
-                    resultDiv.textContent = 'FEHLER: Keine Kameras gefunden!';
+                    if (data.name && data.email) {
+                        const isDuplicate = collectedData.some(item => item.email === data.email);
+                        if (isDuplicate) {
+                            resultDiv.textContent = 'FEHLER: Dieser Teilnehmer wurde bereits gescannt!';
+                            resultDiv.className = 'error';
+                            return;
+                        }
+
+                        collectedData.push(data);
+                        localStorage.setItem('collectedHalloweenData', JSON.stringify(collectedData));
+                        
+                        resultDiv.textContent = `Erfolgreich hinzugefügt: ${data.name}`;
+                        resultDiv.className = 'success';
+                        
+                        updateUI();
+                    } else {
+                        throw new Error("Ungültiges Datenformat");
+                    }
+                } catch (e) {
+                    resultDiv.textContent = 'FEHLER: Ungültiger QR-Code im Bild!';
+                    resultDiv.className = 'error';
                 }
-            }).catch((err) => {
-                resultDiv.textContent = `FEHLER BEIM KAMERAZUGRIFF: ${err}`;
-                alert(`Konnte keine Kameraliste abrufen. Fehler: ${err}`);
+            }
+
+            // Klick auf unseren schönen Button löst Klick auf das unsichtbare Datei-Feld aus
+            uploadBtn.addEventListener('click', () => {
+                fileInput.click();
             });
+
+            // Wenn der Nutzer eine Datei ausgewählt hat
+            fileInput.addEventListener('change', e => {
+                if (e.target.files.length === 0) {
+                    return;
+                }
+                const imageFile = e.target.files[0];
+                resultDiv.textContent = 'Analysiere Bild...';
+                resultDiv.className = '';
+                
+                html5QrCode.scanFile(imageFile, true) // true = showImage zur Vorschau (optional)
+                    .then(decodedText => {
+                        handleDecodedText(decodedText);
+                    })
+                    .catch(err => {
+                        resultDiv.textContent = `FEHLER: Konnte keinen QR-Code im Bild finden. (${err})`;
+                        resultDiv.className = 'error';
+                    });
+            });
+
+            exportBtn.addEventListener('click', () => {
+                let csvContent = "data:text/csv;charset=utf-8,";
+                csvContent += "Name,Email,Marketing-Zustimmung\n";
+
+                collectedData.forEach(item => {
+                    const row = `${item.name.replace(/,/g, '')},${item.email.replace(/,/g, '')},${item.marketingConsent ? 'Ja' : 'Nein'}`;
+                    csvContent += row + "\n";
+                });
+
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "halloween_challenge_daten.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+
+            // Initialen Zustand laden
+            updateUI();
         });
     </script>
 </body>
