@@ -47,12 +47,12 @@ document.getElementById('completion-form').addEventListener('submit', (event) =>
     const privacyConsent = document.getElementById('privacy-consent').checked;
     const marketingConsent = document.getElementById('marketing-consent').checked;
 
-
+    // Prüfung nur noch auf die Pflichtfelder. marketingConsent ist optional.
     if (name && email && privacyConsent) {
         const finalData = { name, email, marketingConsent };
         showFinalQrCodeView(finalData);
     } else {
-        alert('Bitte fülle alle Felder aus und stimme den Bedingungen zu, um fortzufahren.');
+        alert('Bitte fülle die Pflichtfelder aus und stimme der Datenschutzerklärung zu.');
     }
 });
 
