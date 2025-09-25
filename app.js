@@ -47,10 +47,8 @@ document.getElementById('completion-form').addEventListener('submit', (event) =>
     const privacyConsent = document.getElementById('privacy-consent').checked;
     const marketingConsent = document.getElementById('marketing-consent').checked;
 
-    // --- ANPASSUNG FÜR RECHTSSICHERHEIT ---
-    // So wie es jetzt ist, MÜSSEN beide Boxen angehakt sein.
-    // Für die DSGVO-konforme Version, entferne `&& marketingConsent` aus der nächsten Zeile.
-    if (name && email && privacyConsent && marketingConsent) {
+
+    if (name && email && privacyConsent) {
         const finalData = { name, email, marketingConsent };
         showFinalQrCodeView(finalData);
     } else {
