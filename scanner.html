@@ -38,7 +38,7 @@
             </tbody>
     </table>
 
-    <script>
+<script>
         document.addEventListener('DOMContentLoaded', () => {
             const statusDiv = document.getElementById('status');
             const countHeader = document.getElementById('count');
@@ -60,22 +60,20 @@
                 exportBtn.disabled = collectedData.length === 0;
             }
 
-            // --- HIER IST DIE NEUE LOGIK ---
             function processUrlData() {
                 const urlParams = new URLSearchParams(window.location.search);
                 
-                // Nur fortfahren, wenn Daten in der URL sind
                 if (urlParams.has('name') && urlParams.has('email') && urlParams.has('consent')) {
                     const data = {
                         name: urlParams.get('name'),
                         email: urlParams.get('email'),
-                        marketingConsent: urlParams.get('consent') === 'true' // Text 'true' in boolean umwandeln
+                        marketingConsent: urlParams.get('consent') === 'true'
                     };
 
                     const isDuplicate = collectedData.some(item => item.email === data.email);
                     if (isDuplicate) {
                         statusDiv.textContent = 'FEHLER: Dieser Teilnehmer wurde bereits erfasst!';
-                        statusDiv.className = 'error'; // Du müsstest eine .error-Klasse im CSS hinzufügen
+                        statusDiv.className = 'error';
                         return;
                     }
 
@@ -91,17 +89,31 @@
                 updateUI();
             }
 
+            // --- HIER IST DIE KORRIGIERTE EXPORT-FUNKTION ---
             exportBtn.addEventListener('click', () => {
-                let csvContent = "data:text/csv;charset=utf-8,";
-                csvContent += "Name,Email,Marketing-Zustimmung\n";
-                collectedData.forEach(item => {
-                    const row = `${item.name.replace(/,/g, '')},${item.email.replace(/,/g, '')},${item.marketingConsent ? 'Ja' : 'Nein'}`;
-                    csvContent += row + "\n";
+                // 1. Erstelle die Kopfzeile und die Datenzeilen
+                const header = "Name,Email,Marketing-Zustimmung";
+                const rows = collectedData.map(item => {
+                    // Kommas im Namen oder der E-Mail entfernen, um CSV nicht zu zerstören
+                    const name = item.name.replace(/,/g, '');
+                    const email = item.email.replace(/,/g, '');
+                    const consent = item.marketingConsent ? 'Ja' : 'Nein';
+                    return `${name},${email},${consent}`;
                 });
-                const encodedUri = encodeURI(csvContent);
+
+                // 2. Füge alles zu einem einzigen String zusammen
+                const csvContent = [header, ...rows].join("\n");
+                
+                // 3. Erstelle einen unsichtbaren Download-Link
                 const link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
+                // Kodieren des Inhalts für die URL
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                link.href = URL.createObjectURL(blob);
+                
+                // 4. Setze den Dateinamen korrekt
                 link.setAttribute("download", "halloween_challenge_daten.csv");
+                
+                // 5. Füge den Link hinzu, klicke ihn und entferne ihn wieder
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
