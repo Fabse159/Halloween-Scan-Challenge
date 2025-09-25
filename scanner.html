@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner & Datensammler</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 20px auto; padding: 0 15px; }
+        h1, h2 { color: #000; text-align: center; }
+        #reader { width: 100%; max-width: 500px; margin: 20px auto; border: 2px solid #eee; border-radius: 8px; }
+        #result { text-align: center; font-size: 1.1em; font-weight: bold; margin: 20px 0; padding: 15px; border-radius: 8px; }
+        .success { color: #28a745; background-color: #e0ffe0; }
+        .error { color: #dc3545; background-color: #ffe0e0; }
+        button { background-color: #007aff; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 1rem; width: 100%; margin-top: 20px; }
+        button:disabled { background-color: #aaa; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+
+    <h1>QR Code Scanner & Datensammler</h1>
+    
+    <div id="reader"></div>
+    <div id="result">Bitte einen QR-Code scannen...</div>
+
+    <hr>
+    
+    <h2 id="count">Gesammelte Daten: 0</h2>
+    <button id="export-btn" disabled>Daten als CSV (Excel) exportieren</button>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>E-Mail</th>
+                <th>Werbung OK?</th>
+            </tr>
+        </thead>
+        <tbody id="data-table-body">
+            </tbody>
+    </table>
+
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const resultDiv = document.getElementById('result');
+            const countHeader = document.getElementById('count');
+            const tableBody = document.getElementById('data-table-body');
+            const exportBtn = document.getElementById('export-btn');
+
+            let collectedData = JSON.parse(localStorage.getItem('collectedHalloweenData')) || [];
+
+            function updateUI() {
+                countHeader.textContent = `Gesammelte Daten: ${collectedData.length}`;
+                tableBody.innerHTML = '';
+                
+                collectedData.forEach(item => {
+                    const row = tableBody.insertRow();
+                    row.insertCell(0).textContent = item.name;
+                    row.insertCell(1).textContent = item.email;
+                    const consentCell = row.insertCell(2);
+                    consentCell.textContent = item.marketingConsent ? '✅ Ja' : '❌ Nein';
+                });
+
+                exportBtn.disabled = collectedData.length === 0;
+            }
+
+            function onScanSuccess(decodedText, decodedResult) {
+                try {
+                    const data = JSON.parse(decodedText);
+                    
+                    if (data.name && data.email) {
+                        // Prüfen, ob dieser Eintrag (via E-Mail) schon existiert
+                        const isDuplicate = collectedData.some(item => item.email === data.email);
+                        if (isDuplicate) {
+                            resultDiv.textContent = 'FEHLER: Dieser Teilnehmer wurde bereits gescannt!';
+                            resultDiv.className = 'error';
+                            return;
+                        }
+
+                        collectedData.push(data);
+                        localStorage.setItem('collectedHalloweenData', JSON.stringify(collectedData));
+                        
+                        resultDiv.textContent = `Erfolgreich hinzugefügt: ${data.name}`;
+                        resultDiv.className = 'success';
+                        
+                        updateUI();
+                    } else {
+                        throw new Error("Ungültiges Datenformat");
+                    }
+                } catch (e) {
+                    resultDiv.textContent = 'FEHLER: Ungültiger QR-Code!';
+                    resultDiv.className = 'error';
+                }
+            }
+
+            function onScanFailure(error) {
+                // Diese Funktion kann ignoriert werden, sie wird oft aufgerufen
+            }
+
+            let html5QrcodeScanner = new Html5QrcodeScanner(
+                "reader", 
+                { fps: 10, qrbox: { width: 250, height: 250 } }, 
+                false // verbose = false
+            );
+            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+
+            exportBtn.addEventListener('click', () => {
+                let csvContent = "data:text/csv;charset=utf-8,";
+                csvContent += "Name,Email,Marketing-Zustimmung\n"; // Header-Zeile
+
+                collectedData.forEach(item => {
+                    const row = `${item.name},${item.email},${item.marketingConsent ? 'Ja' : 'Nein'}`;
+                    csvContent += row + "\n";
+                });
+
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "halloween_challenge_daten.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+
+            // Initialen Zustand laden
+            updateUI();
+        });
+    </script>
+</body>
+</html>
