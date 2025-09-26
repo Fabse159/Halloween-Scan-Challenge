@@ -3,53 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Datensammler</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 20px auto; padding: 0 15px; }
-        h1, h2 { color: #000; text-align: center; }
-        #status { text-align: center; font-size: 1.2em; font-weight: bold; margin: 30px 0; padding: 20px; border-radius: 8px; }
-        .success { color: #28a745; background-color: #e0ffe0; }
-        .info { color: #004085; background-color: #cce5ff; }
-        .error { color: #dc3545; background-color: #ffe0e0; }
-        button { background-color: #007aff; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 1rem; width: 100%; margin-top: 10px; }
-        button:disabled { background-color: #aaa; cursor: not-allowed; }
-        .export-buttons { display: flex; gap: 10px; margin-top: 20px; }
-        #export-yes-btn { background-color: #28a745; }
-        #export-no-btn { background-color: #dc3545; }
-        #reset-btn { background-color: #6c757d; margin-top: 10px; } /* Grau für Reset */
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .sortable { cursor: pointer; user-select: none; }
-        .sortable:hover { background-color: #e9e9e9; }
-        .sorted-asc::after { content: " ▲"; }
-        .sorted-desc::after { content: " ▼"; }
-    </style>
+    <title>Datensammler Dieburg</title>
+    <link rel="stylesheet" href="scanner_style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <header>
+        <img src="https://www.halloweenaufschlossalsbach.de/wp-content/uploads/2023/06/Logo-neu-HP-Header.png" alt="Halloween Schloss Alsbach Logo" class="header-logo">
+        <h1>Datensammler <br> Dieburg</h1>
+    </header>
 
-    <h1>Datensammler</h1>
-
-    <div id="status" class="info">Lade Daten...</div>
-    
-    <h2 id="count">Gesammelte Daten: 0</h2>
-    <div class="export-buttons">
-        <button id="export-yes-btn" disabled>Export JA</button>
-        <button id="export-no-btn" disabled>Export NEIN</button>
-    </div>
-    <button id="reset-btn" disabled>Datensatz zurücksetzen</button>
-    
-    <table>
-        <thead>
-            <tr>
-                <th class="sortable" data-sort="name">Name</th>
-                <th class="sortable" data-sort="email">E-Mail</th>
-                <th class="sortable" data-sort="marketingConsent">Werbung OK?</th>
-            </tr>
-        </thead>
-        <tbody id="data-table-body">
-            </tbody>
-    </table>
+    <main>
+        <div id="status" class="info">Lade Daten...</div>
+        
+        <h2 id="count">Gesammelte Daten: 0</h2>
+        <div class="export-buttons">
+            <button id="export-yes-btn" disabled>Export JA</button>
+            <button id="export-no-btn" disabled>Export NEIN</button>
+        </div>
+        <button id="reset-btn" disabled>Datensatz zurücksetzen</button>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th class="sortable" data-sort="name">Name</th>
+                    <th class="sortable" data-sort="email">E-Mail</th>
+                    <th class="sortable" data-sort="marketingConsent">Werbung OK?</th>
+                </tr>
+            </thead>
+            <tbody id="data-table-body">
+                </tbody>
+        </table>
+    </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -169,29 +154,20 @@
                 generateAndDownloadCsv(consentNo, 'export_werbung_nein.csv');
             });
 
-            // --- NEUE LOGIK FÜR DEN RESET-BUTTON ---
             resetBtn.addEventListener('click', () => {
-                // Button sofort sperren, um Doppelklicks zu verhindern
                 resetBtn.disabled = true;
-                
-                // Sicherheitsabfrage anzeigen
                 const isConfirmed = confirm("Bist du sicher, dass du alle gesammelten Daten endgültig löschen möchtest? Dieser Vorgang kann nicht rückgängig gemacht werden.");
 
                 if (isConfirmed) {
-                    // Daten löschen
                     collectedData = [];
                     localStorage.removeItem('collectedHalloweenData');
-                    
-                    // UI aktualisieren und Erfolgsmeldung anzeigen
                     statusDiv.textContent = 'Alle Daten wurden erfolgreich gelöscht.';
                     statusDiv.className = 'success';
                     updateUI();
                 }
 
-                // Button nach 5 Sekunden wieder freigeben, egal was der Nutzer wählt
                 setTimeout(() => {
-                    // Nur freigeben, wenn auch Daten vorhanden sind
-                    if (collectedData.length > 0) {
+                    if (collectedData.length > 0 || !isConfirmed) { // re-enable if not confirmed or data still exists
                         resetBtn.disabled = false;
                     }
                 }, 5000);
