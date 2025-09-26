@@ -11,22 +11,27 @@ window.addEventListener('load', () => {
 
     const isFirstScan = challengeData.scannedStations.length === 0;
 
-    if (isFirstScan && currentStation) {
+    // Nur Anweisungen beim ersten Start aufrufen
+    if (isFirstScan && !currentStation) { // Added !currentStation to prevent showing instructions if first scan is also a station scan
         showView('instructions-view');
-    }
-
-    if (currentStation && !challengeData.scannedStations.includes(currentStation)) {
+    } else if (currentStation && !challengeData.scannedStations.includes(currentStation)) {
+        // Wenn eine neue Station gescannt wurde
         challengeData.scannedStations.push(currentStation);
         localStorage.setItem('halloweenChallenge', JSON.stringify(challengeData));
-    }
-
-    if (challengeData.scannedStations.length > 0) {
+        if (challengeData.scannedStations.length >= TOTAL_STATIONS) {
+            showView('completion-form-view');
+        } else {
+            showProgressView(challengeData);
+        }
+    } else if (challengeData.scannedStations.length > 0) {
+        // Bereits gestartet, aber noch nicht alle Stationen
         if (challengeData.scannedStations.length >= TOTAL_STATIONS) {
             showView('completion-form-view');
         } else {
             showProgressView(challengeData);
         }
     } else {
+        // Falls keine Station gescannt wurde und nicht der erste Start ist
         showView('instructions-view');
         document.querySelector('#instructions-view p').textContent = "Bitte scanne den QR-Code an einer beliebigen Station, um zu beginnen!";
     }
@@ -74,22 +79,21 @@ function showFinalQrCodeView(finalData) {
     const qrCodeContainer = document.getElementById('final-qrcode');
     qrCodeContainer.innerHTML = ''; 
 
-    // --- HIER IST DIE WICHTIGE ÄNDERUNG ---
-    // Ersetze diese URL mit dem Link zu deiner scanner.html
-    const baseUrl = 'https://fabse159.github.io/Halloween-Scan-Challenge/scanner.html';
+    // --- HIER IST DEINE BASE URL, bitte anpassen ---
+    const baseUrl = 'https://fabse159.github.io/DEIN-REPO/scanner.html'; // ERSETZE DEIN-REPO
 
-    // Daten für die URL sicher kodieren
     const nameParam = encodeURIComponent(finalData.name);
     const emailParam = encodeURIComponent(finalData.email);
-    const consentParam = finalData.marketingConsent; // true/false muss nicht kodiert werden
+    const consentParam = finalData.marketingConsent;
 
-    // Die finale URL mit den Daten zusammenbauen
     const urlWithData = `${baseUrl}?name=${nameParam}&email=${emailParam}&consent=${consentParam}`;
 
-    // Erzeuge den QR-Code aus der URL
     new QRCode(qrCodeContainer, {
         text: urlWithData,
         width: 256,
-        height: 256
+        height: 256,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
     });
 }
