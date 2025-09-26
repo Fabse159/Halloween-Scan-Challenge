@@ -1,6 +1,10 @@
+@font-face {
+    font-family: 'Halloween Custom'; /* Gib der Schrift einen Namen */
+    src: url('HalloweenSchrift.otf') format('opentype');
+}
 /* Grundlegende Stile für den gruseligen Halloween-Look */
 body {
-    font-family: 'Open Sans', sans-serif; /* Fallback für Creepster für Fließtext */
+    font-family: 'Open Sans', sans-serif; /* Fallback für Halloween Custom für Fließtext */
     background-color: #000; /* Tiefschwarz */
     color: #e0e0e0; /* Hellgrau für guten Kontrast */
     margin: 0;
@@ -25,7 +29,7 @@ header {
 }
 
 h1 {
-    font-family: 'Creepster', cursive; /* Gruselige Schriftart */
+    font-family: 'Halloween Custom', cursive; /* Gruselige Schriftart */
     color: #cc0000; /* Kräftiges Rot */
     font-size: 2.8em;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
@@ -34,7 +38,7 @@ h1 {
 }
 
 h2 {
-    font-family: 'Creepster', cursive;
+    font-family: 'Halloween Custom', cursive;
     color: #ff4500; /* Orange-Rot für H2 */
     font-size: 2em;
     margin-top: 30px;
