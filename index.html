@@ -3,67 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Halloween Challenge</title>
+    <title>Halloween Challenge Dieburg</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 <body>
+    <header>
+        <img src="https://www.halloweenaufschlossalsbach.de/wp-content/uploads/2023/06/Logo-neu-HP-Header.png" alt="Halloween Schloss Alsbach Logo" class="header-logo">
+        <h1>Halloween Challenge <br> Dieburg</h1>
+    </header>
 
-    <div class="container">
-        <header>
-            <h1>Halloween Challenge 🎃</h1>
-        </header>
-
-        <div id="instructions-view" class="view">
+    <main>
+        <section id="instructions-view" class="view">
             <h2>Willkommen zur Challenge!</h2>
-            <p><strong>So funktioniert's:</strong></p>
-            <ol class="instructions-list">
-                <li>Scanne die QR-Codes an allen Stationen in beliebiger Reihenfolge.</li>
-                <li>Dein Fortschritt wird dir hier immer angezeigt.</li>
-                <li>Wenn du alle Stationen gefunden hast, gib am Ende deine Daten ein.</li>
-                <li>Zeige den finalen QR-Code vor und erhalte als Belohnung einen coolen <strong>Halloween-Schlüsselanhänger</strong>!</li>
-            </ol>
-            <hr>
-        </div>
+            <p>Scanne alle QR-Codes an den Stationen in Dieburg, um die Challenge abzuschließen und deinen Preis abzuholen!</p>
+            <p>Scanne den QR-Code an einer beliebigen Station, um zu beginnen!</p>
+        </section>
 
-        <div id="progress-view" class="view">
-            <h3>Dein Fortschritt:</h3>
+        <section id="progress-view" class="view">
+            <h2>Dein Fortschritt</h2>
             <div id="stations-list">
                 </div>
-        </div>
+        </section>
 
-        <div id="completion-form-view" class="view">
-            <h2>🎉 Glückwunsch! Du hast alle Stationen gefunden! 🎉</h2>
-            <p>Sichere dir jetzt deinen Halloween-Schlüsselanhänger! Fülle dazu bitte die folgenden Felder aus.</p>
+        <section id="completion-form-view" class="view">
+            <h2>Fast geschafft!</h2>
+            <p>Du hast alle Stationen gefunden! Fülle das Formular aus, um deinen QR-Code für den Preis zu erhalten.</p>
             <form id="completion-form">
-                <input type="text" id="name" placeholder="Dein Name" required>
-                <input type="email" id="email" placeholder="Deine E-Mail-Adresse" required>
+                <label for="name">Name:</label>
+                <input type="text" id="name" required>
                 
-                <div class="consent-box">
+                <label for="email">E-Mail:</label>
+                <input type="email" id="email" required>
+                
+                <div class="checkbox-group">
                     <input type="checkbox" id="privacy-consent" required>
-                    <label for="privacy-consent">
-                        Ich habe die <a href="datenschutz.html" target="_blank">Datenschutzerklärung</a> gelesen und stimme ihr zu.
-                    </label>
+                    <label for="privacy-consent">Ich habe die <a href="https://www.halloweenaufschlossalsbach.de/datenschutz/" target="_blank">Datenschutzerklärung</a> gelesen und stimme ihr zu.</label>
                 </div>
-                <div class="consent-box">
+
+                <div class="checkbox-group">
                     <input type="checkbox" id="marketing-consent">
-                    <label for="marketing-consent">
-                        Ich möchte per E-Mail über zukünftige Angebote informiert werden.
-                    </label>
+                    <label for="marketing-consent">Ich möchte über zukünftige Events informiert werden.</label>
                 </div>
-
-                <button type="submit">Belohnung abholen</button>
+                
+                <button type="submit">QR-Code erstellen</button>
             </form>
-        </div>
+        </section>
 
-        <div id="final-qrcode-view" class="view">
-            <h2>Zeige diesen Code dem Veranstalter!</h2>
-            <p>Vielen Dank für deine Teilnahme. Dein Schlüsselanhänger wartet auf dich!</p>
+        <section id="final-qrcode-view" class="view">
+            <h2>Dein Preis-QR-Code!</h2>
+            <p>Zeige diesen Code dem Team in der Event-Zentrale, um deinen Preis abzuholen.</p>
             <div id="final-qrcode"></div>
-        </div>
+        </section>
+    </main>
 
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
