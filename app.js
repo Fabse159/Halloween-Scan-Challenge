@@ -1,9 +1,17 @@
-// Konfiguration: Wie viele Stationen gibt es insgesamt?
-const TOTAL_STATIONS = 5;
+// Konfiguration: 7 Stationen mit neuen Namen
+const TOTAL_STATIONS = 7;
+const STATION_NAMES = {
+    1: "Foltershow",
+    2: "Pfad der Albträume",
+    3: "Zombiezone",
+    4: "Hexenwald & Wolfsrevier",
+    5: "Blutfarm & Kornfeld",
+    6: "Sanatorium & Hochsicherheitstrakt",
+    7: "Clownzirkus"
+};
 
 // Wird ausgeführt, sobald die Webseite geladen ist
 window.addEventListener('load', () => {
-    // Lade den Spielstand oder erstelle einen neuen
     let challengeData = JSON.parse(localStorage.getItem('halloweenChallenge')) || { scannedStations: [] };
     
     const urlParams = new URLSearchParams(window.location.search);
@@ -11,29 +19,26 @@ window.addEventListener('load', () => {
 
     const isFirstScan = challengeData.scannedStations.length === 0;
 
-    // Nur Anweisungen beim ersten Start aufrufen
-    if (isFirstScan && !currentStation) { // Added !currentStation to prevent showing instructions if first scan is also a station scan
+    // Nur Anweisungen anzeigen, wenn die Seite ohne Stations-Parameter aufgerufen wird
+    if (isFirstScan && !currentStation) {
         showView('instructions-view');
-    } else if (currentStation && !challengeData.scannedStations.includes(currentStation)) {
-        // Wenn eine neue Station gescannt wurde
+        return; // Frühzeitiger Abbruch, um weitere Logik zu verhindern
+    }
+    
+    // Eine gültige Station wurde gescannt
+    if (currentStation && !challengeData.scannedStations.includes(currentStation)) {
         challengeData.scannedStations.push(currentStation);
         localStorage.setItem('halloweenChallenge', JSON.stringify(challengeData));
-        if (challengeData.scannedStations.length >= TOTAL_STATIONS) {
-            showView('completion-form-view');
-        } else {
-            showProgressView(challengeData);
-        }
+    }
+
+    // Entscheiden, welche Ansicht gezeigt wird
+    if (challengeData.scannedStations.length >= TOTAL_STATIONS) {
+        showView('completion-form-view');
     } else if (challengeData.scannedStations.length > 0) {
-        // Bereits gestartet, aber noch nicht alle Stationen
-        if (challengeData.scannedStations.length >= TOTAL_STATIONS) {
-            showView('completion-form-view');
-        } else {
-            showProgressView(challengeData);
-        }
+        showProgressView(challengeData);
     } else {
-        // Falls keine Station gescannt wurde und nicht der erste Start ist
+        // Fallback, falls jemand die Seite ohne Aktion lädt
         showView('instructions-view');
-        document.querySelector('#instructions-view p').textContent = "Bitte scanne den QR-Code an einer beliebigen Station, um zu beginnen!";
     }
 });
 
@@ -68,7 +73,7 @@ function showProgressView(challengeData) {
         const isScanned = challengeData.scannedStations.includes(i);
         const stationDiv = document.createElement('div');
         stationDiv.className = 'station' + (isScanned ? ' scanned' : '');
-        stationDiv.textContent = `Station ${i}: ${isScanned ? '✔️ Gefunden' : '❌ Offen'}`;
+        stationDiv.textContent = STATION_NAMES[i]; // Benutze die neuen Stationsnamen
         stationsList.appendChild(stationDiv);
     }
 }
@@ -79,8 +84,8 @@ function showFinalQrCodeView(finalData) {
     const qrCodeContainer = document.getElementById('final-qrcode');
     qrCodeContainer.innerHTML = ''; 
 
-    // --- HIER IST DEINE BASE URL, bitte anpassen ---
-    const baseUrl = 'https://fabse159.github.io/Halloween-Scan-Challenge/scanner.html'; // ERSETZE DEIN-REPO
+    // WICHTIG: Ersetze diese URL mit dem korrekten Link zu deiner scanner.html
+    const baseUrl = 'https://fabse159.github.io/DEIN-REPO/scanner.html'; 
 
     const nameParam = encodeURIComponent(finalData.name);
     const emailParam = encodeURIComponent(finalData.email);
