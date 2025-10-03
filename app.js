@@ -80,7 +80,7 @@ function showFinalQrCodeView(finalData) {
     qrCodeContainer.innerHTML = ''; 
 
     // --- HIER IST DEINE BASE URL, bitte anpassen ---
-    const baseUrl = 'https://fabse159.github.io/DEIN-REPO/scanner.html'; // ERSETZE DEIN-REPO
+    const baseUrl = 'https://fabse159.github.io/Halloween-Scan-Challenge/scanner.html'; // ERSETZE DEIN-REPO
 
     const nameParam = encodeURIComponent(finalData.name);
     const emailParam = encodeURIComponent(finalData.email);
