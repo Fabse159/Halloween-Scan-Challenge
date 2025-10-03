@@ -10,8 +10,13 @@ const STATION_NAMES = {
     7: "Clownzirkus"
 };
 
-// Wird ausgeführt, sobald die Webseite geladen ist
-window.addEventListener('load', () => {
+document.addEventListener('DOMContentLoaded', () => {
+    // UI-Elemente
+    const instructionsModal = document.getElementById('instructions-modal');
+    const closeInstructionsBtn = document.getElementById('close-instructions-btn');
+    const showInstructionsBtn = document.getElementById('show-instructions-btn');
+
+    // Lade den Spielstand oder erstelle einen neuen
     let challengeData = JSON.parse(localStorage.getItem('halloweenChallenge')) || { scannedStations: [] };
     
     const urlParams = new URLSearchParams(window.location.search);
@@ -19,32 +24,41 @@ window.addEventListener('load', () => {
 
     const isFirstScan = challengeData.scannedStations.length === 0;
 
-    // Nur Anweisungen anzeigen, wenn die Seite ohne Stations-Parameter aufgerufen wird
-    if (isFirstScan && !currentStation) {
-        showView('instructions-view');
-        return; // Frühzeitiger Abbruch, um weitere Logik zu verhindern
-    }
-    
-    // Eine gültige Station wurde gescannt
+    // Eine gültige, neue Station wurde gescannt
     if (currentStation && !challengeData.scannedStations.includes(currentStation)) {
+        // Beim allerersten Scan die Anleitung als Pop-up zeigen
+        if (isFirstScan) {
+            instructionsModal.style.display = 'flex';
+        }
         challengeData.scannedStations.push(currentStation);
         localStorage.setItem('halloweenChallenge', JSON.stringify(challengeData));
     }
 
-    // Entscheiden, welche Ansicht gezeigt wird
+    // Entscheiden, welche Haupt-Ansicht gezeigt wird
     if (challengeData.scannedStations.length >= TOTAL_STATIONS) {
         showView('completion-form-view');
-    } else if (challengeData.scannedStations.length > 0) {
-        showProgressView(challengeData);
     } else {
-        // Fallback, falls jemand die Seite ohne Aktion lädt
-        showView('instructions-view');
+        // In allen anderen Fällen die Fortschrittsanzeige zeigen
+        showView('progress-view');
+        showProgressViewContent(challengeData);
     }
+    
+    // Steuerungs-Button für die Anleitung nur anzeigen, wenn das Spiel läuft
+    if (challengeData.scannedStations.length > 0) {
+        showInstructionsBtn.style.display = 'block';
+    }
+
+    // Event Listeners für die Anleitung
+    closeInstructionsBtn.addEventListener('click', () => {
+        instructionsModal.style.display = 'none';
+    });
+    showInstructionsBtn.addEventListener('click', () => {
+        instructionsModal.style.display = 'flex';
+    });
 });
 
 document.getElementById('completion-form').addEventListener('submit', (event) => {
     event.preventDefault(); 
-
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
     const privacyConsent = document.getElementById('privacy-consent').checked;
@@ -59,28 +73,29 @@ document.getElementById('completion-form').addEventListener('submit', (event) =>
 });
 
 function showView(viewId) {
-    document.querySelectorAll('.view').forEach(view => view.style.display = 'none');
+    document.querySelectorAll('main > .view').forEach(view => view.style.display = 'none');
     document.getElementById(viewId).style.display = 'block';
 }
 
-function showProgressView(challengeData) {
-    showView('progress-view');
-    
+function showProgressViewContent(challengeData) {
     const stationsList = document.getElementById('stations-list');
     stationsList.innerHTML = '';
-
-    for (let i = 1; i <= TOTAL_STATIONS; i++) {
-        const isScanned = challengeData.scannedStations.includes(i);
-        const stationDiv = document.createElement('div');
-        stationDiv.className = 'station' + (isScanned ? ' scanned' : '');
-        stationDiv.textContent = STATION_NAMES[i]; // Benutze die neuen Stationsnamen
-        stationsList.appendChild(stationDiv);
+    
+    if (challengeData.scannedStations.length === 0) {
+        stationsList.innerHTML = '<p>Noch keine Station gescannt. Finde den ersten QR-Code!</p>';
+    } else {
+        for (let i = 1; i <= TOTAL_STATIONS; i++) {
+            const isScanned = challengeData.scannedStations.includes(i);
+            const stationDiv = document.createElement('div');
+            stationDiv.className = 'station' + (isScanned ? ' scanned' : '');
+            stationDiv.textContent = STATION_NAMES[i];
+            stationsList.appendChild(stationDiv);
+        }
     }
 }
 
 function showFinalQrCodeView(finalData) {
     showView('final-qrcode-view');
-    
     const qrCodeContainer = document.getElementById('final-qrcode');
     qrCodeContainer.innerHTML = ''; 
 
@@ -90,7 +105,6 @@ function showFinalQrCodeView(finalData) {
     const nameParam = encodeURIComponent(finalData.name);
     const emailParam = encodeURIComponent(finalData.email);
     const consentParam = finalData.marketingConsent;
-
     const urlWithData = `${baseUrl}?name=${nameParam}&email=${emailParam}&consent=${consentParam}`;
 
     new QRCode(qrCodeContainer, {
