@@ -9,23 +9,26 @@
     <script src="https://unpkg.com/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 <body>
+    <button id="show-instructions-btn" class="info-button" style="display: none;">?</button>
+
+    <div id="instructions-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h2>Willkommen zur Challenge!</h2>
+            <ol class="instructions-list">
+                <li>Finde und scanne die QR-Codes an allen 7 Stationen auf dem Gelände.</li>
+                <li>Dein Fortschritt wird dir auf der Hauptseite immer angezeigt. Die Reihenfolge ist egal.</li>
+                <li>Sobald du alle Stationen gefunden hast, kannst du dir deinen Preis-Code erstellen.</li>
+            </ol>
+            <button id="close-instructions-btn">Verstanden!</button>
+        </div>
+    </div>
+
     <header>
         <img src="logo.png" alt="Halloween Schloss Alsbach Logo" class="header-logo">
         <h1>Scan Challenge <br> Dieburg</h1>
     </header>
 
     <main>
-        <section id="instructions-view" class="view">
-            <h2>Willkommen zur Challenge!</h2>
-            <p><strong>So einfach funktioniert's:</strong></p>
-            <ol class="instructions-list">
-                <li>Finde und scanne die QR-Codes an allen 7 Stationen auf dem Gelände.</li>
-                <li>Dein Fortschritt wird dir hier immer angezeigt. Die Reihenfolge ist egal.</li>
-                <li>Sobald du alle Stationen gefunden hast, kannst du dir deinen Preis-Code erstellen.</li>
-            </ol>
-            <p>Scanne jetzt eine beliebige Station, um zu beginnen!</p>
-        </section>
-
         <section id="progress-view" class="view">
             <h2>Dein Fortschritt</h2>
             <div id="stations-list">
