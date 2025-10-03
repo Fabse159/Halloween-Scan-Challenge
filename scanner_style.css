@@ -1,8 +1,8 @@
 @font-face {
-    font-family: 'Halloween Custom'; /* Gib der Schrift einen Namen */
+    font-family: 'Halloween Custom';
     src: url('HalloweenSchrift.otf') format('opentype');
 }
-/* Grundlegende Stile für den gruseligen Halloween-Look (Scanner-Version) */
+
 body {
     font-family: 'Open Sans', sans-serif;
     background-color: #000;
@@ -17,7 +17,7 @@ body {
 header {
     background-color: #1a0000;
     padding: 20px 0;
-    border-bottom: 3px solid #cc0000;
+    border-bottom: 3px solid #b30000;
     margin-bottom: 20px;
 }
 
@@ -27,19 +27,21 @@ header {
     margin-bottom: 10px;
 }
 
-h1 {
+/* Alle Texte mit der Custom-Schriftart werden jetzt blutrot */
+h1, h2, th {
     font-family: 'Halloween Custom', cursive;
-    color: #cc0000;
-    font-size: 2.8em;
+    color: #b30000; /* Blutrot */
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+h1 {
+    font-size: 2.8em;
     margin: 0;
     line-height: 1.1;
 }
 
 h2 {
-    font-family: 'Halloween Custom', cursive;
-    color: #ff4500;
-    font-size: 2em;
+    font-size: 2.2em;
     margin-top: 30px;
     margin-bottom: 15px;
 }
@@ -47,39 +49,29 @@ h2 {
 main {
     max-width: 800px;
     margin: 20px auto;
-    padding: 0 15px;
-    background-color: #111; /* Dunkelgrauer Hintergrund für Hauptbereich */
+    padding: 25px;
+    background-color: #111;
     border: 1px solid #333;
     border-radius: 10px;
-    padding: 25px;
-    box-shadow: 0 0 15px rgba(204, 0, 0, 0.5);
+    box-shadow: 0 0 15px rgba(179, 0, 0, 0.5);
 }
 
 #status {
     background-color: #333;
     border: 1px solid #555;
     color: #eee;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 30px 0;
+    padding: 20px;
+    border-radius: 8px;
 }
 
-.success {
-    background-color: #28a745;
-    border-color: #1e7e34;
-    color: white;
-}
-.info {
-    background-color: #004085;
-    border-color: #002752;
-    color: white;
-}
-.error {
-    background-color: #dc3545;
-    border-color: #b21f2d;
-    color: white;
-}
-
+.success { background-color: #28a745; border-color: #1e7e34; color: white; }
+.info { background-color: #004085; border-color: #002752; color: white; }
+.error { background-color: #dc3545; border-color: #b21f2d; color: white; }
 
 button {
-    background-color: #007aff;
     color: white;
     border: none;
     padding: 12px 20px;
@@ -89,18 +81,18 @@ button {
     width: 100%;
     margin-top: 10px;
     transition: background-color 0.3s ease, transform 0.2s ease;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: bold;
 }
 
-button:hover {
-    background-color: #0056b3;
+button:hover:not(:disabled) {
     transform: translateY(-2px);
 }
 
 button:disabled {
-    background-color: #6c757d; /* Grau für deaktivierte Buttons */
+    background-color: #444;
     cursor: not-allowed;
-    transform: translateY(0);
-    box-shadow: none;
+    color: #888;
 }
 
 .export-buttons {
@@ -108,31 +100,16 @@ button:disabled {
     gap: 10px;
     margin-top: 20px;
 }
-.export-buttons button {
-    flex: 1; /* Beide Buttons teilen sich den Platz */
-    width: auto; /* Wichtig für flex */
-}
+.export-buttons button { flex: 1; width: auto; }
 
-#export-yes-btn {
-    background-color: #28a745;
-}
-#export-yes-btn:hover {
-    background-color: #218838;
-}
+#export-yes-btn { background-color: #28a745; }
+#export-yes-btn:hover:not(:disabled) { background-color: #218838; }
 
-#export-no-btn {
-    background-color: #dc3545;
-}
-#export-no-btn:hover {
-    background-color: #c82333;
-}
+#export-no-btn { background-color: #b30000; }
+#export-no-btn:hover:not(:disabled) { background-color: #c82333; }
 
-#reset-btn {
-    background-color: #6c757d; /* Dunkleres Grau für Reset */
-}
-#reset-btn:hover:not(:disabled) {
-    background-color: #5a6268;
-}
+#reset-btn { background-color: #6c757d; }
+#reset-btn:hover:not(:disabled) { background-color: #5a6268; }
 
 table {
     width: 100%;
@@ -140,52 +117,28 @@ table {
     margin-top: 20px;
 }
 
-th, td {
-    border: 1px solid #444; /* Dunklere Rahmen für Tabelle */
+td {
+    border: 1px solid #444;
     padding: 10px;
     text-align: left;
     color: #eee;
 }
 
 th {
-    background-color: #333; /* Dunklerer Hintergrund für Tabellenköpfe */
-    font-weight: bold;
-    color: #ff4500; /* Orange-Rot für Überschriften */
+    border: 1px solid #444;
+    padding: 10px;
+    text-align: left;
+    background-color: #222;
 }
 
-.sortable {
-    cursor: pointer;
-    user-select: none;
-    position: relative;
-}
-.sortable:hover {
-    background-color: #444;
-}
-.sorted-asc::after {
-    content: " ▲";
-    color: #ff4500;
-}
-.sorted-desc::after {
-    content: " ▼";
-    color: #ff4500;
-}
+.sortable { cursor: pointer; user-select: none; }
+.sortable:hover { background-color: #333; }
+.sorted-asc::after { content: " ▲"; }
+.sorted-desc::after { content: " ▼"; }
 
-/* Responsivität für kleinere Bildschirme */
 @media (max-width: 768px) {
-    h1 {
-        font-size: 2.2em;
-    }
-    h2 {
-        font-size: 1.6em;
-    }
-    main {
-        padding: 15px;
-    }
-    .export-buttons {
-        flex-direction: column; /* Buttons untereinander auf kleinen Bildschirmen */
-    }
-    .export-buttons button {
-        width: 100%;
-        margin-top: 10px;
-    }
+    h1 { font-size: 2.2em; }
+    h2 { font-size: 1.8em; }
+    main { padding: 15px; }
+    .export-buttons { flex-direction: column; }
 }
