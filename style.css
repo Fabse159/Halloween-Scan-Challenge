@@ -1,51 +1,52 @@
 @font-face {
-    font-family: 'Halloween Custom'; /* Gib der Schrift einen Namen */
+    font-family: 'Halloween Custom';
     src: url('HalloweenSchrift.otf') format('opentype');
 }
-/* Grundlegende Stile für den gruseligen Halloween-Look */
+
 body {
-    font-family: 'Open Sans', sans-serif; /* Fallback für Halloween Custom für Fließtext */
-    background-color: #000; /* Tiefschwarz */
-    color: #e0e0e0; /* Hellgrau für guten Kontrast */
+    font-family: 'Open Sans', sans-serif;
+    background-color: #000;
+    color: #e0e0e0;
     margin: 0;
     padding: 0;
     line-height: 1.6;
     text-align: center;
-    overflow-x: hidden; /* Verhindert horizontales Scrollen */
+    overflow-x: hidden;
 }
 
-/* Header-Bereich mit Logo und Titel */
 header {
-    background-color: #1a0000; /* Dunkles Rot/Schwarz */
+    background-color: #1a0000;
     padding: 20px 0;
-    border-bottom: 3px solid #cc0000; /* Kräftiger roter Akzent */
+    border-bottom: 3px solid #b30000;
     margin-bottom: 20px;
 }
 
 .header-logo {
-    max-width: 180px; /* Größe des Logos anpassen */
+    max-width: 180px;
     height: auto;
     margin-bottom: 10px;
 }
 
-h1 {
-    font-family: 'Halloween Custom', cursive; /* Gruselige Schriftart */
-    color: #cc0000; /* Kräftiges Rot */
-    font-size: 2.8em;
+/* Alle Texte mit der Custom-Schriftart werden jetzt blutrot */
+h1, h2 {
+    font-family: 'Halloween Custom', cursive;
+    color: #b30000; /* Blutrot, leicht dunkler als zuvor */
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
     margin: 0;
+}
+
+h1 {
+    font-size: 2.8em;
     line-height: 1.1;
+    margin: 0;
 }
 
 h2 {
-    font-family: 'Halloween Custom', cursive;
-    color: #ff4500; /* Orange-Rot für H2 */
-    font-size: 2em;
+    font-size: 2.2em;
     margin-top: 30px;
     margin-bottom: 15px;
 }
 
-/* Hauptinhaltsbereich */
 main {
     max-width: 600px;
     margin: 20px auto;
@@ -53,11 +54,11 @@ main {
 }
 
 .view {
-    background-color: #111; /* Dunkelgrauer Hintergrund für Sektionen */
+    background-color: #111;
     border: 1px solid #333;
     border-radius: 10px;
     padding: 25px;
-    box-shadow: 0 0 15px rgba(204, 0, 0, 0.5); /* Leichter roter Glüheffekt */
+    box-shadow: 0 0 15px rgba(179, 0, 0, 0.5); /* Roter Glüheffekt angepasst */
     margin-bottom: 30px;
 }
 
@@ -66,7 +67,17 @@ p {
     font-size: 1.1em;
 }
 
-/* Fortschrittsanzeige */
+.instructions-list {
+    text-align: left;
+    list-style-type: '🎃'; /* Halloween-Kürbis als Aufzählungszeichen */
+    padding-left: 30px;
+}
+
+.instructions-list li {
+    padding-left: 15px;
+    margin-bottom: 10px;
+}
+
 #stations-list {
     margin-top: 20px;
     text-align: left;
@@ -74,32 +85,24 @@ p {
 }
 
 .station {
-    background-color: #333; /* Dunklerer Hintergrund für Stations-Elemente */
+    background-color: #333;
     border: 1px solid #555;
     padding: 10px 15px;
     margin-bottom: 8px;
     border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     font-size: 1.1em;
-}
-
-.station.scanned {
-    background-color: #400; /* Dunkles Rot, wenn gescannt */
-    border-color: #800;
-    color: #fff;
-    box-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
-}
-
-.station.scanned::before {
-    content: "✓"; /* Haken für gescannte Stationen */
-    color: #0f0;
-    margin-right: 10px;
     font-weight: bold;
 }
 
-/* Formular-Elemente */
+.station.scanned {
+    background-color: #400;
+    border-color: #800;
+    color: #fff;
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
+    text-decoration: line-through;
+    text-decoration-color: #ff4500;
+}
+
 form label {
     display: block;
     text-align: left;
@@ -123,9 +126,9 @@ form input[type="email"] {
 
 form input[type="text"]:focus,
 form input[type="email"]:focus {
-    border-color: #cc0000;
+    border-color: #b30000;
     outline: none;
-    box-shadow: 0 0 8px rgba(204, 0, 0, 0.5);
+    box-shadow: 0 0 8px rgba(179, 0, 0, 0.5);
 }
 
 .checkbox-group {
@@ -138,7 +141,7 @@ form input[type="email"]:focus {
     width: 20px;
     height: 20px;
     margin-right: 10px;
-    accent-color: #cc0000; /* Farbe des Hakens/Box */
+    accent-color: #b30000;
 }
 
 .checkbox-group label {
@@ -148,7 +151,7 @@ form input[type="email"]:focus {
 }
 
 .checkbox-group a {
-    color: #ff8080; /* Helleres Rot für Links */
+    color: #ff8080;
     text-decoration: none;
 }
 
@@ -157,49 +160,35 @@ form input[type="email"]:focus {
 }
 
 button {
-    background-color: #cc0000; /* Kräftiges Rot für Buttons */
+    background-color: #b30000;
     color: white;
+    font-family: 'Halloween Custom', cursive;
+    font-size: 1.5em;
     border: none;
     padding: 12px 20px;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 1.1em;
     width: 100%;
     margin-top: 20px;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 button:hover {
-    background-color: #ff0000; /* Helleres Rot beim Hover */
+    background-color: #ff0000;
     transform: translateY(-2px);
 }
 
-button:disabled {
-    background-color: #666;
-    cursor: not-allowed;
-    transform: translateY(0);
-    box-shadow: none;
-}
-
-/* QR Code Anzeige */
 #final-qrcode {
-    background-color: white; /* QR-Code braucht weißen Hintergrund */
+    background-color: white;
     padding: 15px;
     border-radius: 8px;
-    display: inline-block; /* Für zentrierte Anzeige */
+    display: inline-block;
     margin-top: 20px;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
-/* Responsivität für kleinere Bildschirme */
 @media (max-width: 480px) {
-    h1 {
-        font-size: 2.2em;
-    }
-    h2 {
-        font-size: 1.6em;
-    }
-    .view {
-        padding: 15px;
-    }
+    h1 { font-size: 2.2em; }
+    h2 { font-size: 1.8em; }
+    .view { padding: 15px; }
 }
