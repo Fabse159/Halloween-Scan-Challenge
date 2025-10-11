@@ -125,7 +125,7 @@ button:hover { background-color: #ff0000; transform: translateY(-2px); }
 #create-qr-btn {
     color: #000;
     font-weight: bold;
-    font-size: 2.25em; /* 1.5em * 1.5 = 2.25em */
+    /* Die extra große Schriftart wurde hier entfernt */
 }
 
 #final-qrcode { background-color: white; padding: 15px; border-radius: 8px; display: inline-block; margin-top: 20px; box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); }
