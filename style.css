@@ -111,7 +111,7 @@ button {
     background-color: #b30000;
     color: white;
     font-family: 'Halloween Custom', cursive;
-    font-size: 1.5em;
+    font-size: 1.5em; /* Basis-Schriftgröße für Buttons */
     border: none;
     padding: 12px 20px;
     border-radius: 8px;
@@ -125,7 +125,7 @@ button:hover { background-color: #ff0000; transform: translateY(-2px); }
 #create-qr-btn {
     color: #000;
     font-weight: bold;
-    /* Die extra große Schriftart wurde hier entfernt */
+    font-size: 2.25em; /* Basisgröße 1.5em * 1.5 = 2.25em */
 }
 
 #final-qrcode { background-color: white; padding: 15px; border-radius: 8px; display: inline-block; margin-top: 20px; box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); }
