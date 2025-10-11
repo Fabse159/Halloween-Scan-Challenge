@@ -1,14 +1,14 @@
-// Konfiguration: 7 Stationen mit neuen Namen
-const TOTAL_STATIONS = 7;
-const STATION_NAMES = {
-    1: "Foltershow",
-    2: "Pfad der Albträume",
-    3: "Zombiezone",
-    4: "Hexenwald & Wolfsrevier",
-    5: "Blutfarm & Kornfeld",
-    6: "Sanatorium & Hochsicherheitstrakt",
-    7: "Clownzirkus"
-};
+// Konfiguration: Jede Station hat eine einzigartige ID und einen neuen Namen.
+const STATIONS = [
+    { id: '4821', name: 'Folterplatz' },
+    { id: '1903', name: 'Tunnel der Ängste' },
+    { id: '7356', name: 'Zombiezone' },
+    { id: '9210', name: 'Dark Forest' },
+    { id: '3488', name: 'Cornfield' },
+    { id: '6675', name: 'Anstalt X' },
+    { id: '8102', name: 'Clowntown' }
+];
+const TOTAL_STATIONS = STATIONS.length;
 
 document.addEventListener('DOMContentLoaded', () => {
     // UI-Elemente
@@ -20,35 +20,41 @@ document.addEventListener('DOMContentLoaded', () => {
     let challengeData = JSON.parse(localStorage.getItem('halloweenChallenge')) || { scannedStations: [] };
     
     const urlParams = new URLSearchParams(window.location.search);
-    const currentStation = parseInt(urlParams.get('station'), 10);
+    // Wir lesen die ID als Text, nicht mehr als Zahl
+    const currentStationId = urlParams.get('station');
 
     const isFirstScan = challengeData.scannedStations.length === 0;
 
+    // Nur Anweisungen anzeigen, wenn die Seite ohne Stations-Parameter aufgerufen wird
+    if (isFirstScan && !currentStationId) {
+        showView('instructions-view');
+        return; 
+    }
+    
     // Eine gültige, neue Station wurde gescannt
-    if (currentStation && !challengeData.scannedStations.includes(currentStation)) {
-        // Beim allerersten Scan die Anleitung als Pop-up zeigen
-        if (isFirstScan) {
-            instructionsModal.style.display = 'flex';
+    if (currentStationId && !challengeData.scannedStations.includes(currentStationId)) {
+        // Prüfen, ob die gescannte ID überhaupt existiert
+        if (STATIONS.some(s => s.id === currentStationId)) {
+            if (isFirstScan) {
+                instructionsModal.style.display = 'flex';
+            }
+            challengeData.scannedStations.push(currentStationId);
+            localStorage.setItem('halloweenChallenge', JSON.stringify(challengeData));
         }
-        challengeData.scannedStations.push(currentStation);
-        localStorage.setItem('halloweenChallenge', JSON.stringify(challengeData));
     }
 
     // Entscheiden, welche Haupt-Ansicht gezeigt wird
     if (challengeData.scannedStations.length >= TOTAL_STATIONS) {
         showView('completion-form-view');
     } else {
-        // In allen anderen Fällen die Fortschrittsanzeige zeigen
         showView('progress-view');
         showProgressViewContent(challengeData);
     }
     
-    // Steuerungs-Button für die Anleitung nur anzeigen, wenn das Spiel läuft
     if (challengeData.scannedStations.length > 0) {
         showInstructionsBtn.style.display = 'block';
     }
 
-    // Event Listeners für die Anleitung
     closeInstructionsBtn.addEventListener('click', () => {
         instructionsModal.style.display = 'none';
     });
@@ -82,15 +88,16 @@ function showProgressViewContent(challengeData) {
     stationsList.innerHTML = '';
     
     if (challengeData.scannedStations.length === 0) {
-        stationsList.innerHTML = '<p>Noch keine Station gescannt. Finde den ersten QR-Code!</p>';
+        stationsList.innerHTML = '<p style="padding: 0 20px;">Noch keine Station gescannt. Finde den ersten QR-Code!</p>';
     } else {
-        for (let i = 1; i <= TOTAL_STATIONS; i++) {
-            const isScanned = challengeData.scannedStations.includes(i);
+        // Schleife über die neue STATIONS-Liste
+        STATIONS.forEach(station => {
+            const isScanned = challengeData.scannedStations.includes(station.id);
             const stationDiv = document.createElement('div');
             stationDiv.className = 'station' + (isScanned ? ' scanned' : '');
-            stationDiv.textContent = STATION_NAMES[i];
+            stationDiv.textContent = station.name;
             stationsList.appendChild(stationDiv);
-        }
+        });
     }
 }
 
@@ -99,7 +106,7 @@ function showFinalQrCodeView(finalData) {
     const qrCodeContainer = document.getElementById('final-qrcode');
     qrCodeContainer.innerHTML = ''; 
 
-    // WICHTIG: Ersetze diese URL mit dem korrekten Link zu deiner scanner.html
+    // Die URL zu deinem Datensammler
     const baseUrl = 'https://fabse159.github.io/Halloween-Scan-Challenge/scanner.html'; 
 
     const nameParam = encodeURIComponent(finalData.name);
