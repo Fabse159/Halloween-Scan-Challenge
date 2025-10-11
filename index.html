@@ -18,8 +18,8 @@
             <ol class="instructions-list">
                 <li>Scanne die QR-Codes, die du am <strong>Ausgang</strong> jeder der 7 Stationen findest.</li>
                 <li>Dein Fortschritt wird dir auf der Hauptseite immer angezeigt. Die Reihenfolge ist egal.</li>
-                <li><a href="https://halloweenschlossalsbach.github.io/Lageplan/" target="_blank" class="instruction-link">Hier findest du den Lageplan</a>, um dich zurechtzufinden.</li>
                 <li>Hast du alle Stationen geschafft, gib deinen Namen & E-Mail ein. Entscheide, ob du News & Rabatte erhalten willst. Erstelle dann deinen Preis-QR-Code, zeige ihn an der Kasse vor und erhalte einen Schlüsselanhänger als Geschenk!</li>
+                <li><a href="https://halloweenschlossalsbach.github.io/Lageplan/" target="_blank" class="instruction-link">Hier findest du den Lageplan</a>, um dich zurechtzufinden.</li>
             </ol>
             <button id="close-instructions-btn">Verstanden!</button>
         </div>
@@ -30,10 +30,13 @@
         <h1>Scan Challenge <br> Dieburg</h1>
     </header>
 
+    <div class="main-actions" style="display: none;">
+        <a href="https://halloweenschlossalsbach.github.io/Lageplan/" class="map-button" target="_blank">Lageplan anzeigen</a>
+    </div>
+
     <main>
         <section id="progress-view" class="view">
             <h2>Dein Fortschritt</h2>
-            <a href="https://halloweenschlossalsbach.github.io/Lageplan/" class="map-button" target="_blank">Lageplan anzeigen</a>
             <div id="stations-list">
                 </div>
         </section>
@@ -44,24 +47,19 @@
             <form id="completion-form">
                 <label for="name">Name:</label>
                 <input type="text" id="name" required>
-                
                 <label for="email">E-Mail:</label>
                 <input type="email" id="email" required>
-                
                 <div class="checkbox-group">
                     <input type="checkbox" id="privacy-consent" required>
                     <label for="privacy-consent">Ich habe die <a href="https://www.halloweenaufschlossalsbach.de/datenschutz/" target="_blank">Datenschutzerklärung</a> gelesen und stimme ihr zu.</label>
                 </div>
-
                 <div class="checkbox-group">
                     <input type="checkbox" id="marketing-consent">
                     <label for="marketing-consent">Ich möchte über zukünftige Events informiert werden.</label>
                 </div>
-                
                 <button type="submit">QR-Code erstellen</button>
             </form>
         </section>
-
         <section id="final-qrcode-view" class="view">
             <h2>Dein Preis-QR-Code!</h2>
             <p>Zeige diesen Code dem Team in der Event-Zentrale, um deinen Preis abzuholen.</p>
@@ -72,15 +70,9 @@
     <footer>
         <h3>Folge uns!</h3>
         <div class="social-icons">
-            <a href="https://www.instagram.com/halloween.schlossalsbach?igsh=MXVhb3I2bGpyZnFyaA==" target="_blank" aria-label="Instagram">
-                <i class="fab fa-instagram"></i>
-            </a>
-            <a href="https://www.tiktok.com/@halloweenschlossa?_t=ZN-90Rosul5szT&_r=1" target="_blank" aria-label="TikTok">
-                <i class="fab fa-tiktok"></i>
-            </a>
-            <a href="https://www.facebook.com/share/163muYxxCf/?mibextid=wwXIfr" target="_blank" aria-label="Facebook">
-                <i class="fab fa-facebook-f"></i>
-            </a>
+            <a href="https://www.instagram.com/halloween.schlossalsbach?igsh=MXVhb3I2bGpyZnFyaA==" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.tiktok.com/@halloweenschlossa?_t=ZN-90Rosul5szT&_r=1" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+            <a href="https://www.facebook.com/share/163muYxxCf/?mibextid=wwXIfr" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
         </div>
     </footer>
 
