@@ -25,8 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const isFirstVisit = challengeData.scannedStations.length === 0;
 
-    // --- KORRIGIERTE LOGIK ---
-
     // 1. Verarbeite einen neuen Scan, falls einer vorhanden ist
     if (currentStationId && !challengeData.scannedStations.includes(currentStationId)) {
         if (STATIONS.some(s => s.id === currentStationId)) {
@@ -52,8 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
         instructionsModal.style.display = 'flex';
     }
 
-    // 4. Zeige die Steuerungs-Buttons an, wenn das Spiel läuft
-    if (challengeData.scannedStations.length > 0) {
+    // --- KORRIGIERTE LOGIK FÜR DIE BUTTONS ---
+    // 4. Zeige die Steuerungs-Buttons an, solange das Spiel noch nicht beendet ist
+    if (challengeData.scannedStations.length < TOTAL_STATIONS) {
         showInstructionsBtn.style.display = 'block';
         mapButtonContainer.style.display = 'block';
     }
