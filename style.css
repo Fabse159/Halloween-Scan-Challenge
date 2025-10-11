@@ -37,9 +37,7 @@ h1 { font-size: 2.8em; line-height: 1.1; }
 h2 { font-size: 2.2em; margin-top: 30px; margin-bottom: 15px; }
 h3 { font-size: 1.8em; }
 
-/* KORRIGIERTER CONTAINER FÜR DEN BUTTON */
 .main-actions {
-    /* Sorgt für den gewünschten Abstand nach oben/unten */
     padding: 20px 15px 10px 15px;
 }
 
@@ -64,7 +62,6 @@ p { margin-bottom: 1em; font-size: 1.1em; }
 .instructions-list li { padding-left: 15px; margin-bottom: 10px; }
 .instruction-link { color: #ff8080; text-decoration: none; font-weight: bold; }
 .instruction-link:hover { text-decoration: underline; }
-
 
 #stations-list { margin-top: 20px; text-align: left; padding: 0 20px; }
 
@@ -126,8 +123,9 @@ button {
 button:hover { background-color: #ff0000; transform: translateY(-2px); }
 
 #create-qr-btn {
-    color: #000; /* Schwarze Schrift */
+    color: #000;
     font-weight: bold;
+    font-size: 2.25em; /* 1.5em * 1.5 = 2.25em */
 }
 
 #final-qrcode { background-color: white; padding: 15px; border-radius: 8px; display: inline-block; margin-top: 20px; box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); }
@@ -182,15 +180,14 @@ button:hover { background-color: #ff0000; transform: translateY(-2px); }
     min-width: 150px;
 }
 
-/* KORRIGIERTER, DEZENTERER LAGEPLAN-BUTTON */
 .map-button {
     display: inline-block;
     background-color: #111;
     color: #b30000;
     font-family: 'Open Sans', sans-serif;
     font-weight: bold;
-    font-size: 1em; /* Schriftgröße reduziert */
-    padding: 8px 18px; /* Innenabstand reduziert */
+    font-size: 1em;
+    padding: 8px 18px;
     border-radius: 8px;
     text-decoration: none;
     border: 2px solid #b30000;
