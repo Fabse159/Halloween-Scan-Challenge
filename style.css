@@ -57,6 +57,10 @@ p { margin-bottom: 1em; font-size: 1.1em; }
 
 .instructions-list { text-align: left; list-style-type: '🎃'; padding-left: 30px; }
 .instructions-list li { padding-left: 15px; margin-bottom: 10px; }
+/* NEU: Stil für den Link in der Anleitung */
+.instruction-link { color: #ff8080; text-decoration: none; font-weight: bold; }
+.instruction-link:hover { text-decoration: underline; }
+
 
 #stations-list { margin-top: 20px; text-align: left; padding: 0 20px; }
 
@@ -170,7 +174,26 @@ button:hover { background-color: #ff0000; transform: translateY(-2px); }
     min-width: 150px;
 }
 
-/* --- NEUE STILE FÜR DEN FOOTER --- */
+/* --- NEUE STILE FÜR DEN LAGEPLAN-BUTTON --- */
+.map-button {
+    display: inline-block;
+    background-color: #ff8c00; /* Auffälliges Orange */
+    color: #000;
+    font-family: 'Halloween Custom', cursive;
+    font-size: 1.4em;
+    padding: 10px 25px;
+    border-radius: 8px;
+    text-decoration: none;
+    margin-bottom: 25px;
+    border: 2px solid #000;
+    transition: all 0.3s ease;
+}
+.map-button:hover {
+    background-color: #ffa500;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(255, 140, 0, 0.5);
+}
+
 footer {
     background-color: #111;
     border-top: 3px solid #b30000;
