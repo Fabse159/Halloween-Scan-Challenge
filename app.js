@@ -15,32 +15,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const instructionsModal = document.getElementById('instructions-modal');
     const closeInstructionsBtn = document.getElementById('close-instructions-btn');
     const showInstructionsBtn = document.getElementById('show-instructions-btn');
-    const mapButtonContainer = document.querySelector('.main-actions'); // Container für den Lageplan-Button
+    const mapButtonContainer = document.querySelector('.main-actions');
 
+    // Lade den Spielstand oder erstelle einen neuen
     let challengeData = JSON.parse(localStorage.getItem('halloweenChallenge')) || { scannedStations: [] };
     
     const urlParams = new URLSearchParams(window.location.search);
     const currentStationId = urlParams.get('station');
 
-    const isFirstScan = challengeData.scannedStations.length === 0;
+    const isFirstVisit = challengeData.scannedStations.length === 0;
 
-    if (isFirstScan && !currentStationId) {
-        showView('progress-view'); // Zeige leere Fortschrittsliste an
-        showProgressViewContent(challengeData);
-        instructionsModal.style.display = 'flex'; // Zeige Anleitung beim ersten Besuch
-        return; 
-    }
-    
+    // --- KORRIGIERTE LOGIK ---
+
+    // 1. Verarbeite einen neuen Scan, falls einer vorhanden ist
     if (currentStationId && !challengeData.scannedStations.includes(currentStationId)) {
         if (STATIONS.some(s => s.id === currentStationId)) {
-            if (isFirstScan) {
-                instructionsModal.style.display = 'flex';
-            }
             challengeData.scannedStations.push(currentStationId);
             localStorage.setItem('halloweenChallenge', JSON.stringify(challengeData));
+            // Zeige die Anleitung nur beim allerersten *erfolgreichen* Scan
+            if (isFirstVisit) {
+                instructionsModal.style.display = 'flex';
+            }
         }
     }
 
+    // 2. Entscheide, welche Haupt-Ansicht gezeigt wird
     if (challengeData.scannedStations.length >= TOTAL_STATIONS) {
         showView('completion-form-view');
     } else {
@@ -48,12 +47,18 @@ document.addEventListener('DOMContentLoaded', () => {
         showProgressViewContent(challengeData);
     }
     
-    // Steuerungs-Buttons (Anleitung & Lageplan) nur anzeigen, wenn das Spiel läuft
-    if (challengeData.scannedStations.length > 0) {
-        showInstructionsBtn.style.display = 'block';
-        mapButtonContainer.style.display = 'block'; // Zeige auch den Lageplan-Button
+    // 3. Zeige die Anleitung an, wenn der Nutzer die Seite das erste Mal direkt aufruft (ohne Scan)
+    if (isFirstVisit && !currentStationId) {
+        instructionsModal.style.display = 'flex';
     }
 
+    // 4. Zeige die Steuerungs-Buttons an, wenn das Spiel läuft
+    if (challengeData.scannedStations.length > 0) {
+        showInstructionsBtn.style.display = 'block';
+        mapButtonContainer.style.display = 'block';
+    }
+
+    // Event Listeners für die Anleitung (funktionieren jetzt immer)
     closeInstructionsBtn.addEventListener('click', () => {
         instructionsModal.style.display = 'none';
     });
@@ -86,23 +91,14 @@ function showProgressViewContent(challengeData) {
     const stationsList = document.getElementById('stations-list');
     stationsList.innerHTML = '';
     
-    if (challengeData.scannedStations.length === 0) {
-        // Zeige eine leere Liste anstatt Text
-        STATIONS.forEach(station => {
-            const stationDiv = document.createElement('div');
-            stationDiv.className = 'station';
-            stationDiv.textContent = station.name;
-            stationsList.appendChild(stationDiv);
-        });
-    } else {
-        STATIONS.forEach(station => {
-            const isScanned = challengeData.scannedStations.includes(station.id);
-            const stationDiv = document.createElement('div');
-            stationDiv.className = 'station' + (isScanned ? ' scanned' : '');
-            stationDiv.textContent = station.name;
-            stationsList.appendChild(stationDiv);
-        });
-    }
+    const stationData = challengeData.scannedStations.length === 0 ? STATIONS.map(s => ({...s, isScanned: false})) : STATIONS.map(s => ({...s, isScanned: challengeData.scannedStations.includes(s.id)}));
+
+    stationData.forEach(station => {
+        const stationDiv = document.createElement('div');
+        stationDiv.className = 'station' + (station.isScanned ? ' scanned' : '');
+        stationDiv.textContent = station.name;
+        stationsList.appendChild(stationDiv);
+    });
 }
 
 function showFinalQrCodeView(finalData) {
