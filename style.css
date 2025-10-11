@@ -34,27 +34,18 @@ h1, h2, h3 {
 }
 
 h1 { font-size: 2.8em; line-height: 1.1; }
-h2 { font-size: 2.2em; margin-top: 10px; margin-bottom: 15px; } /* Margin-top reduziert */
+h2 { font-size: 2.2em; margin-top: 30px; margin-bottom: 15px; }
 h3 { font-size: 1.8em; }
 
+/* KORRIGIERTER CONTAINER FÜR DEN BUTTON */
 .main-actions {
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 0 15px;
+    /* Sorgt für den gewünschten Abstand nach oben/unten */
+    padding: 20px 15px 10px 15px;
 }
-/* Der Container für den Lageplan-Button hat jetzt dieselben Stile wie die anderen Sektionen */
-.main-actions.view {
-    background-color: #111;
-    border: 1px solid #333;
-    border-radius: 10px;
-    padding: 25px;
-    box-shadow: 0 0 15px rgba(179, 0, 0, 0.5);
-}
-
 
 main {
     max-width: 600px;
-    margin: 20px auto;
+    margin: 0 auto;
     padding: 0 15px;
 }
 
@@ -73,6 +64,7 @@ p { margin-bottom: 1em; font-size: 1.1em; }
 .instructions-list li { padding-left: 15px; margin-bottom: 10px; }
 .instruction-link { color: #ff8080; text-decoration: none; font-weight: bold; }
 .instruction-link:hover { text-decoration: underline; }
+
 
 #stations-list { margin-top: 20px; text-align: left; padding: 0 20px; }
 
@@ -133,10 +125,9 @@ button {
 }
 button:hover { background-color: #ff0000; transform: translateY(-2px); }
 
-/* NEUE REGEL FÜR DEN QR-CODE-BUTTON */
 #create-qr-btn {
     color: #000; /* Schwarze Schrift */
-    font-weight: bold; /* Etwas dicker für bessere Lesbarkeit */
+    font-weight: bold;
 }
 
 #final-qrcode { background-color: white; padding: 15px; border-radius: 8px; display: inline-block; margin-top: 20px; box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); }
@@ -160,7 +151,6 @@ button:hover { background-color: #ff0000; transform: translateY(-2px); }
     line-height: 36px;
     text-align: center;
 }
-/* KORREKTUR FÜR DIE ZENTRIERUNG DES POP-UPS */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -172,14 +162,13 @@ button:hover { background-color: #ff0000; transform: translateY(-2px); }
     align-items: center;
     justify-content: center;
     z-index: 1002;
-    /* Padding wurde entfernt, um Zentrierungsprobleme zu beheben */
 }
 .modal-content {
     background-color: #111;
     border: 2px solid #b30000;
     padding: 30px;
     border-radius: 10px;
-    width: 90%; /* Breite relativ zum Bildschirm */
+    width: 90%;
     max-width: 500px;
     box-shadow: 0 0 25px rgba(179, 0, 0, 0.7);
 }
@@ -193,15 +182,15 @@ button:hover { background-color: #ff0000; transform: translateY(-2px); }
     min-width: 150px;
 }
 
-/* DEZENTERER LAGEPLAN-BUTTON */
+/* KORRIGIERTER, DEZENTERER LAGEPLAN-BUTTON */
 .map-button {
     display: inline-block;
-    background-color: transparent;
+    background-color: #111;
     color: #b30000;
-    font-family: 'Open Sans', sans-serif; /* Normale Schriftart */
+    font-family: 'Open Sans', sans-serif;
     font-weight: bold;
-    font-size: 1.1em;
-    padding: 8px 20px;
+    font-size: 1em; /* Schriftgröße reduziert */
+    padding: 8px 18px; /* Innenabstand reduziert */
     border-radius: 8px;
     text-decoration: none;
     border: 2px solid #b30000;
