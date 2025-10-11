@@ -27,7 +27,7 @@ header {
     margin-bottom: 10px;
 }
 
-h1, h2 {
+h1, h2, h3 {
     font-family: 'Halloween Custom', cursive;
     color: #b30000;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
@@ -36,6 +36,7 @@ h1, h2 {
 
 h1 { font-size: 2.8em; line-height: 1.1; }
 h2 { font-size: 2.2em; margin-top: 30px; margin-bottom: 15px; }
+h3 { font-size: 1.8em; }
 
 main {
     max-width: 600px;
@@ -54,12 +55,7 @@ main > .view {
 
 p { margin-bottom: 1em; font-size: 1.1em; }
 
-.instructions-list {
-    text-align: left;
-    list-style-type: '🎃';
-    padding-left: 30px;
-}
-
+.instructions-list { text-align: left; list-style-type: '🎃'; padding-left: 30px; }
 .instructions-list li { padding-left: 15px; margin-bottom: 10px; }
 
 #stations-list { margin-top: 20px; text-align: left; padding: 0 20px; }
@@ -123,7 +119,6 @@ button:hover { background-color: #ff0000; transform: translateY(-2px); }
 
 #final-qrcode { background-color: white; padding: 15px; border-radius: 8px; display: inline-block; margin-top: 20px; box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); }
 
-/* --- NEUE STILE FÜR DIE ANLEITUNG --- */
 .info-button {
     position: fixed;
     top: 15px;
@@ -138,7 +133,7 @@ button:hover { background-color: #ff0000; transform: translateY(-2px); }
     font-weight: bold;
     border: 2px solid white;
     cursor: pointer;
-    z-index: 1001; /* Über allem, außer dem Modal */
+    z-index: 1001;
     padding: 0;
     line-height: 36px;
     text-align: center;
@@ -154,13 +149,14 @@ button:hover { background-color: #ff0000; transform: translateY(-2px); }
     align-items: center;
     justify-content: center;
     z-index: 1002;
+    padding: 15px;
 }
 .modal-content {
     background-color: #111;
     border: 2px solid #b30000;
     padding: 30px;
     border-radius: 10px;
-    width: 90%;
+    width: 100%;
     max-width: 500px;
     box-shadow: 0 0 25px rgba(179, 0, 0, 0.7);
 }
@@ -172,6 +168,40 @@ button:hover { background-color: #ff0000; transform: translateY(-2px); }
     margin-top: 20px;
     width: auto;
     min-width: 150px;
+}
+
+/* --- NEUE STILE FÜR DEN FOOTER --- */
+footer {
+    background-color: #111;
+    border-top: 3px solid #b30000;
+    padding: 30px 20px;
+    margin-top: 40px;
+}
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-top: 20px;
+}
+.social-icons a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #222;
+    border: 2px solid #b30000;
+    color: #b30000;
+    font-size: 1.8em;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+.social-icons a:hover {
+    background-color: #b30000;
+    color: #000;
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 5px 15px rgba(179, 0, 0, 0.7);
 }
 
 @media (max-width: 480px) {
