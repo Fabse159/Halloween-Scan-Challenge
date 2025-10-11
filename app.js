@@ -15,25 +15,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const instructionsModal = document.getElementById('instructions-modal');
     const closeInstructionsBtn = document.getElementById('close-instructions-btn');
     const showInstructionsBtn = document.getElementById('show-instructions-btn');
+    const mapButtonContainer = document.querySelector('.main-actions'); // Container für den Lageplan-Button
 
-    // Lade den Spielstand oder erstelle einen neuen
     let challengeData = JSON.parse(localStorage.getItem('halloweenChallenge')) || { scannedStations: [] };
     
     const urlParams = new URLSearchParams(window.location.search);
-    // Wir lesen die ID als Text, nicht mehr als Zahl
     const currentStationId = urlParams.get('station');
 
     const isFirstScan = challengeData.scannedStations.length === 0;
 
-    // Nur Anweisungen anzeigen, wenn die Seite ohne Stations-Parameter aufgerufen wird
     if (isFirstScan && !currentStationId) {
-        showView('instructions-view');
+        showView('progress-view'); // Zeige leere Fortschrittsliste an
+        showProgressViewContent(challengeData);
+        instructionsModal.style.display = 'flex'; // Zeige Anleitung beim ersten Besuch
         return; 
     }
     
-    // Eine gültige, neue Station wurde gescannt
     if (currentStationId && !challengeData.scannedStations.includes(currentStationId)) {
-        // Prüfen, ob die gescannte ID überhaupt existiert
         if (STATIONS.some(s => s.id === currentStationId)) {
             if (isFirstScan) {
                 instructionsModal.style.display = 'flex';
@@ -43,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Entscheiden, welche Haupt-Ansicht gezeigt wird
     if (challengeData.scannedStations.length >= TOTAL_STATIONS) {
         showView('completion-form-view');
     } else {
@@ -51,8 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
         showProgressViewContent(challengeData);
     }
     
+    // Steuerungs-Buttons (Anleitung & Lageplan) nur anzeigen, wenn das Spiel läuft
     if (challengeData.scannedStations.length > 0) {
         showInstructionsBtn.style.display = 'block';
+        mapButtonContainer.style.display = 'block'; // Zeige auch den Lageplan-Button
     }
 
     closeInstructionsBtn.addEventListener('click', () => {
@@ -88,9 +87,14 @@ function showProgressViewContent(challengeData) {
     stationsList.innerHTML = '';
     
     if (challengeData.scannedStations.length === 0) {
-        stationsList.innerHTML = '<p style="padding: 0 20px;">Noch keine Station gescannt. Finde den ersten QR-Code!</p>';
+        // Zeige eine leere Liste anstatt Text
+        STATIONS.forEach(station => {
+            const stationDiv = document.createElement('div');
+            stationDiv.className = 'station';
+            stationDiv.textContent = station.name;
+            stationsList.appendChild(stationDiv);
+        });
     } else {
-        // Schleife über die neue STATIONS-Liste
         STATIONS.forEach(station => {
             const isScanned = challengeData.scannedStations.includes(station.id);
             const stationDiv = document.createElement('div');
@@ -106,7 +110,6 @@ function showFinalQrCodeView(finalData) {
     const qrCodeContainer = document.getElementById('final-qrcode');
     qrCodeContainer.innerHTML = ''; 
 
-    // Die URL zu deinem Datensammler
     const baseUrl = 'https://fabse159.github.io/Halloween-Scan-Challenge/scanner.html'; 
 
     const nameParam = encodeURIComponent(finalData.name);
